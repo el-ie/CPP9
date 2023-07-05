@@ -32,9 +32,11 @@ int	main(int argc, char **argv)
 
 	while (getline(inputFile, line_readed))
 	{
+		if (loop == 0)
+			{loop++; continue;}
+
 		//security check line
 
-		//std::cout << line_readed << std::endl;
 
 		pos = line_readed.find(',');
 		//if (pos == std::string::npos) ??
@@ -44,26 +46,26 @@ int	main(int argc, char **argv)
 		//if (line_readed[pos + 1] == '\0') ??
 		value_str = line_readed.substr(pos + 1);
 
-		std::cout << value_str << " : ";//DELETE
+		//debug//std::cout << "[" << value_str << "]" << " : ";
 
 		iss.str(value_str);
 		if (loop != 0 && !(iss >> value))
 			{std::cerr << "abort: loop {" << loop << "}" << std::endl; abort();}//change
 
 		iss.clear();// est ce suffisant
+		//iss.seekg(0); //utilite?
 
-		std::cout << value << std::endl;
+		//debug//std::cout << "{" << value << "}" << std::endl;
 
 		if (database.insert(std::pair<std::string, float>(date, value)).second == false)
 			abort();
 
-		loop++;
 	}
+	// resoudre le probleme de la perte de la deuxieme decimale dans la conversion
+	// a partir de 2020-07-25,9551.28 (wtf)
 
-/*
 	for (std::map<std::string, float>::iterator it = database.begin(); it != database.end(); it++)
 		std::cout << "[" << it->first << "] - [" << it->second << "]" << std::endl;
-		*/
 
 	
 return 0;
