@@ -15,6 +15,7 @@ OBJ			=	$(addprefix $(OBJ_DIR)/, $(SRC_LIST:$(EXTENSION)=.o))
 
 CC			=	@c++
 CFLAGS		= 	-Wall -Werror -Wextra -std=c++98 -I $(INC_DIR)
+#CFLAGS		= 	-std=c++98 -I $(INC_DIR)
 
 RM			= 	@rm -rf 2>/dev/null
 NOPR		= 	--no-print-directory
