@@ -71,6 +71,18 @@ std::map<std::string, double>	file_to_map(std::string file, int debug, std::stri
 	// a partir de 2020-07-25,9551.28 (wtf)
 }
 
+void	display_map(std::map<std::string, double> data, int modulo) 
+{
+	int i = 0;
+
+	for (std::map<std::string, double>::iterator it = data.begin(); it != data.end(); it++)
+	{
+		i++;
+		if (i % modulo == 0)
+			std::cout << "[" << it->first << "] - [" << it->second << "]" << std::endl;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	if (argc != 2)
@@ -89,29 +101,13 @@ int	main(int argc, char **argv)
 
 	bitcoins = file_to_map(argv[1], DEBUG, " | ");
 
-	/*
-	for (std::map<std::string, double>::iterator it = dollar_rate.begin(); it != dollar_rate.end(); it++)
-		std::cout << "[" << it->first << "] - [" << it->second << "]" << std::endl;
+	display_map(dollar_rate, 100);
 
-	for (std::map<std::string, double>::iterator it = bitcoins.begin(); it != bitcoins.end(); it++)
-		std::cout << "[" << it->first << "] - [" << it->second << "]" << std::endl;
-	*/
+	std::cout << "\n ----------------------- \n\n";
 
-	int i = 0;
-	//for (std::map<std::string, double>::iterator it = dollar_rate.begin(); i < 1601 ; it = dollar_rate.at(i))
-
-	for (std::map<std::string, double>::iterator it = dollar_rate.begin(); it != dollar_rate.end(); it++)
-	{
-		i++;
-		if (i % 100 == 0)
-			std::cout << "[" << it->first << "] - [" << it->second << "]" << std::endl;
-	}
-
-	std::cout << "\n------------------------------\n\n";
-
-	for (std::map<std::string, double>::iterator it = bitcoins.begin(); it != bitcoins.end(); it++)
-		std::cout << "[" << it->first << "] - [" << it->second << "]" << std::endl;
-
+	display_map(bitcoins, 1);
+	
 	std::cout << std::endl;
+
 	return 0;
 }
