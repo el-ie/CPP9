@@ -10,9 +10,9 @@
 #define NODEBUG 41
 #define DEBUG 40
 
-std::map<std::string, double>	file_to_map(std::string file, char separator, int debug)
+std::map<std::string, double>	file_to_map(std::string file, int debug, std::string sep_str)
 {
-	std::ifstream	inputFile(file.c_str());
+	std::ifstream	inputFile(file.c_str()); //check openning
 
 	std::map<std::string, double>	data;
 
@@ -23,29 +23,25 @@ std::map<std::string, double>	file_to_map(std::string file, char separator, int 
 	size_t		pos		= 0;
 	int		loop		= 0;//remove?
 
-	std::istringstream	iss;
+	//std::istringstream	iss;
 	char *endptr;
 
 	(void)debug;
+
 	while (getline(inputFile, line_readed))
 	{
 		if (loop == 0)
 		{loop++; continue;}
 
-		//std::cout << "===> [" << line_readed << "]" << std::endl;
-
 		//security check line
 
-		pos = line_readed.find(separator);
-		//if (pos == std::string::npos) ??
+		pos = line_readed.find(sep_str.c_str(), 0);       //if (pos == std::string::npos) ??
 
-		date = line_readed.substr(0, pos);
+		date = line_readed.substr(0, pos);        //if (line_readed[pos + 1] == '\0') ??
 
-		//if (line_readed[pos + 1] == '\0') ??
-		value_str = line_readed.substr(pos + 1);
+		value_str = line_readed.substr(pos + sep_str.size());
 
-		//std::cout << "[" << value_str << "]" << " : ";
-
+		//STRINGSTREAM
 		/*
 		iss.str(value_str);
 		if (loop != 0 && !(iss >> value))
@@ -56,11 +52,12 @@ std::map<std::string, double>	file_to_map(std::string file, char separator, int 
 		//std::cout << "{" << value << "}" << std::endl;
 		*/
 
+		//STRTOD
 		value = std::strtod(value_str.c_str(), &endptr);
 		//if endptr == str...
 
 		while (data.find(date) != data.end()) //! dates identiques
-			date += '_';
+			date += '.';
 
 		if (data.insert(std::pair<std::string, double>(date, value)).second == false)
 		{
@@ -86,11 +83,11 @@ int	main(int argc, char **argv)
 
 	std::map<std::string, double>	dollar_rate, bitcoins;
 
-	dollar_rate = file_to_map("data.csv", ',', NODEBUG);
+	dollar_rate = file_to_map("data.csv", NODEBUG, ",");
 
 	(void)argv;
 
-	bitcoins = file_to_map(argv[1], '|', DEBUG);
+	bitcoins = file_to_map(argv[1], DEBUG, " | ");
 
 	/*
 	for (std::map<std::string, double>::iterator it = dollar_rate.begin(); it != dollar_rate.end(); it++)
