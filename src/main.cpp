@@ -97,8 +97,6 @@ int	main(int argc, char **argv)
 
 	dollar_rate = file_to_map("data.csv", NODEBUG, ",");
 
-	(void)argv;
-
 	bitcoins = file_to_map(argv[1], DEBUG, " | ");
 
 	display_map(dollar_rate, 100);
@@ -106,7 +104,39 @@ int	main(int argc, char **argv)
 	std::cout << "\n ----------------------- \n\n";
 
 	display_map(bitcoins, 1);
-	
+
+	std::cout << "\n ----------------------- \n";
+	////////////////////////////////////////////
+
+	std::map<std::string, double>::iterator itD;
+	std::map<std::string, double>::iterator itD_last;
+
+	for (std::map<std::string, double>::iterator itB = bitcoins.begin(); itB != bitcoins.end(); itB++)
+	{
+		itD = dollar_rate.begin();
+		itD_last = dollar_rate.end();
+		//for (std::map<std::string, double>::iterator itD = dollar_rate.begin(); itD != dollar_rate.end(); itD++)
+		while (itD != dollar_rate.end())
+		{
+			if (itB->first < itD->first)
+			{
+				if (itD_last != dollar_rate.end()) //si ce n'est pas le premier tour et donc itD_last est bon
+					std::cout << "CROSS {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
+				else //sinon c est le premier tour et on doit prendre itD et non last
+					std::cout << "CROSS {" << itB->first << "} {" << itD->first << "}" << std::endl;
+					
+				break;//??
+			}
+			itD_last = itD;
+			itD++;
+		}
+
+		//if (itD == dollar_rate.end() && !(itB->first < itD_last->first))
+		if (itD == dollar_rate.end())
+			std::cout << "CROSS END {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
+
+	}
+
 	std::cout << std::endl;
 
 	return 0;

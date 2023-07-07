@@ -1,4 +1,6 @@
 tags
 *.swp
-wallet
 gitignore
+btc
+obj
+wallet
