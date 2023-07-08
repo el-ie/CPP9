@@ -98,6 +98,8 @@ bool	isOnlyDigits(std::string str)
 
 bool	correct_date(std::string date)
 {
+	//TODO gerer le cas de la double date avec l'ajout des points ....	
+
 	if (date.size() != 10)
 		return false;
 	
@@ -106,26 +108,68 @@ bool	correct_date(std::string date)
 
 	if (date[4] != '-' || date[7] != '-')
 		return false;
+	
+	std::string year_str = date.substr(0,4);
+	std::string month_str = date.substr(5,2);
+	std::string day_str = date.substr(8,2);
+
+	int	year = std::atoi(year.c_str());
+	int	month = std::atoi(month.c_str());
+	int	day = std::atoi(day.c_str());
+
+	if (year < 2009 || year > 2023)
+		return false;
+
+	if (year == 2023 || month > 6)
+		return false
+
+	if (month < 1 || month > 12)
+		return false;
+
+	if (day < 1 || day > 31)
+		return false;
+
+	if (month == 4 || month == 6 || month == 9 || month == 11)
+		if (day > 30)
+			return false;
+	
+	if (month == 2)
+	{
+		if (day > 29)
+			return false;
+
+		if (year % 4 == 0)
+		{
+			if (!(year % 100 == 0) || year % 400 == 0)
+				if (day > 29)
+					return false;
+		}
+		else
+			if (day > 28)
+				return false;
+	}
+		
 
 	return true;
 }
 
-void	check_and_calcul(std::string Bdate, double Bvalue, std::string Ddate, double Drate)
+void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 {
 
 	if (!correct_date(Bdate) || Bvalue < 0 || Bvalue > 1000)
 	{
 		if (!correct_date(Bdate))
+		{
 			std::cerr << "Error: bad input => " << Bdate << std::endl;
+			std::cerr << "INCORRECT DATE" << std::endl;
+		}
+
 		if (Bvalue < 0)
 			std::cerr << "Error: not a positive number. (" << Bvalue << ")" << std::endl;
 		if (Bvalue > 1000)
 			std::cerr << "Error: too large a number. (" << Bvalue << ")" << std::endl;
 		return;
 	}
-
-	(void)Ddate;
-	(void)Drate;
 
 	double result = Bvalue * Drate; //check over the flow ?
 
@@ -179,10 +223,11 @@ int	main(int argc, char **argv)
 			if (itB->first < itD->first)
 			{
 				if (itD_last != dollar_rate.end()) //si ce n'est pas le premier tour et donc itD_last est bon
-					check_and_calcul(itB->first, itB->second, itD->first, itD->second);
-				//std::cout << "normal CROSS {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
+					check_and_calcul(itB->first, itB->second, itD->second);
+					//std::cout << "normal CROSS {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
 				else //sinon c est le premier tour et on doit prendre itD et non last
-					std::cout << "first CROSS {" << itB->first << "} {" << itD->first << "}" << std::endl;
+					check_and_calcul(itB->first, itB->second, itD->second);
+					//std::cout << "first CROSS {" << itB->first << "} {" << itD->first << "}" << std::endl;
 
 				break;//??
 			}
@@ -191,8 +236,8 @@ int	main(int argc, char **argv)
 		}
 		//if (itD == dollar_rate.end() && !(itB->first < itD_last->first))
 		if (itD == dollar_rate.end())
-			std::cout << "CROSS END {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
-
+				check_and_calcul(itB->first, itB->second, itD->second);
+				//std::cout << "CROSS END {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
 	}
 
 	std::cout << std::endl;
