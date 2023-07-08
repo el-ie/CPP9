@@ -5,6 +5,9 @@
 #include <sstream> //for isstringstream, string -> int
 #include <cstdlib> //pour abort
 
+#include <cfloat>
+#include <cmath>
+
 #include "../inc/BitcoinExchange.hpp"
 
 #define NODEBUG 41
@@ -83,13 +86,63 @@ void	display_map(std::map<std::string, double> data, int modulo)
 	}
 }
 
+bool	isOnlyDigits(std::string str)
+{
+	for (int i = 0; str[i]; ++i)
+	{
+		if (!std::isdigit(static_cast<unsigned char>(str[i])))
+			return false;
+	}
+	return true;
+}
+
+bool	correct_date(std::string date)
+{
+	if (date.size() != 10)
+		return false;
+	
+	if (!isOnlyDigits(date.substr(0,4) + date.substr(5,2) + date.substr(8,2)))
+		return false;
+
+	if (date[4] != '-' || date[7] != '-')
+		return false;
+
+	return true;
+}
+
+void	check_and_calcul(std::string Bdate, double Bvalue, std::string Ddate, double Drate)
+{
+
+	if (!correct_date(Bdate) || Bvalue < 0 || Bvalue > 1000)
+	{
+		if (!correct_date(Bdate))
+			std::cerr << "Error: bad input => " << Bdate << std::endl;
+		if (Bvalue < 0)
+			std::cerr << "Error: not a positive number. (" << Bvalue << ")" << std::endl;
+		if (Bvalue > 1000)
+			std::cerr << "Error: too large a number. (" << Bvalue << ")" << std::endl;
+		return;
+	}
+
+	(void)Ddate;
+	(void)Drate;
+
+	double result = Bvalue * Drate; //check over the flow ?
+
+	std::cout << Bdate << " => " << Bvalue << " = " << result << std::endl;
+
+}
+
 int	main(int argc, char **argv)
 {
+	/*
 	if (argc != 2)
 	{
-		std::cerr << "Bad number of arguments" << std::endl;
+		std::cerr << "Error: could not open file." << std::endl; //????????
 		return 1;
 	}
+	*/
+	(void)argc;
 
 	//protect read
 
@@ -107,6 +160,11 @@ int	main(int argc, char **argv)
 
 	std::cout << "\n ----------------------- \n";
 	////////////////////////////////////////////
+	/*
+	std::cout << "correct = " << correct_date(argv[2]) << std::endl;
+	return 0;
+	*/
+	///////////////////////////////////////////
 
 	std::map<std::string, double>::iterator itD;
 	std::map<std::string, double>::iterator itD_last;
@@ -121,16 +179,16 @@ int	main(int argc, char **argv)
 			if (itB->first < itD->first)
 			{
 				if (itD_last != dollar_rate.end()) //si ce n'est pas le premier tour et donc itD_last est bon
-					std::cout << "CROSS {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
+					check_and_calcul(itB->first, itB->second, itD->first, itD->second);
+				//std::cout << "normal CROSS {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
 				else //sinon c est le premier tour et on doit prendre itD et non last
-					std::cout << "CROSS {" << itB->first << "} {" << itD->first << "}" << std::endl;
-					
+					std::cout << "first CROSS {" << itB->first << "} {" << itD->first << "}" << std::endl;
+
 				break;//??
 			}
 			itD_last = itD;
 			itD++;
 		}
-
 		//if (itD == dollar_rate.end() && !(itB->first < itD_last->first))
 		if (itD == dollar_rate.end())
 			std::cout << "CROSS END {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
