@@ -96,7 +96,7 @@ bool	isOnlyDigits(std::string str)
 	return true;
 }
 
-#define DEBUGG 1
+#define DEBUGG 0
 
 bool	correct_date(std::string date)
 {
@@ -158,7 +158,6 @@ bool	correct_date(std::string date)
 		if (day > 30)
 		{
 			if (DEBUGG) std::cout <<"month == 4 || month == 6 || month == 9 || month == 11 ET day > 30\n";
-			std::cout << "day > 30" << std::endl;
 			return false;
 		}
 	}
@@ -188,15 +187,17 @@ bool	correct_date(std::string date)
 void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 {
 
-	std::cout << std::endl << "			=>  [" << Bdate << "]  <=" << std::endl;
+	if (DEBUGG)
+		std::cout << std::endl << "			=>  [" << Bdate << "]  <=" << std::endl;
 
 	if (!correct_date(Bdate) || Bvalue < 0 || Bvalue > 1000)
 	{
 		if (!correct_date(Bdate))
 		{
-			//std::cerr << "Error: bad input => " << Bdate << std::endl;
-			std::cerr << Bdate << "] INCORRECT DATE" << std::endl;
-			std::cerr << "\n----------------------------" << std::endl;
+			std::cerr << "Error: bad input => " << Bdate << std::endl;
+
+			if (DEBUGG) { std::cerr << Bdate << "] INCORRECT DATE" << std::endl;
+				std::cerr << "\n----------------------------" << std::endl; }
 		}
 		if (Bvalue < 0)
 			std::cerr << "Error: not a positive number. (" << Bvalue << ")" << std::endl;
@@ -207,9 +208,9 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 
 	(void)Drate;
 
-	//double result = Bvalue * Drate; //check over the flow ?
+	double result = Bvalue * Drate; //check over the flow ?
 
-	//std::cout << Bdate << " => " << Bvalue << " = " << result << "(" << Drate << ")" << std::endl;
+	std::cout << Bdate << " => " << Bvalue << " = " << result << std::endl;
 
 
 }
@@ -284,15 +285,15 @@ int	main(int argc, char **argv)
 }
 
 /*
-int	main(int argc, char **argv)
-{
-	(void)argc;
+   int	main(int argc, char **argv)
+   {
+   (void)argc;
 
-	int result = correct_date(argv[1]);
-	if (result == 1)
-		std::cout << "Success" << std::endl;
-	if (result == 0)
-		std::cout << "FAIL" << std::endl;
-}
-*/
+   int result = correct_date(argv[1]);
+   if (result == 1)
+   std::cout << "Success" << std::endl;
+   if (result == 0)
+   std::cout << "FAIL" << std::endl;
+   }
+ */
 
