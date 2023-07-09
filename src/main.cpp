@@ -98,9 +98,24 @@ bool	isOnlyDigits(std::string str)
 
 #define DEBUGG 0
 
+void	similar_dates_remove_points(std::string & date)
+{
+	while (date.at(date.length() - 1) == '.')
+		date.erase(date.length() - 1);
+}
+
+//date doit etre une copie pour enlever les .
 bool	correct_date(std::string date)
 {
 	//TODO gerer le cas de la double date avec l'ajout des points ....	
+
+	if (date.empty())
+		return false;
+
+	if (date.find('.') != std::string::npos)
+		similar_dates_remove_points(date);
+	
+	//std::cout << "DATE  " << date << std::endl;
 
 	if (date.size() != 10)
 	{
@@ -206,11 +221,12 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 		return;
 	}
 
-	(void)Drate;
+	//(void)Drate;
 
 	double result = Bvalue * Drate; //check over the flow ?
 
 	std::cout << Bdate << " => " << Bvalue << " = " << result << std::endl;
+	//std::cout << "Drate = " << Drate << std::endl;
 
 
 }
@@ -241,13 +257,7 @@ int	main(int argc, char **argv)
 
 	display_map(bitcoins, 1);
 
-	std::cout << "\n ##################################################### \n";
-	////////////////////////////////////////////
-	/*
-	   std::cout << "correct = " << correct_date(argv[2]) << std::endl;
-	   return 0;
-	 */
-	///////////////////////////////////////////
+	std::cout << "\n ##################################################### \n\n";
 
 	std::map<std::string, double>::iterator itD;
 	std::map<std::string, double>::iterator itD_last;
@@ -256,17 +266,15 @@ int	main(int argc, char **argv)
 	{
 		itD = dollar_rate.begin();
 		itD_last = dollar_rate.end();
-		//for (std::map<std::string, double>::iterator itD = dollar_rate.begin(); itD != dollar_rate.end(); itD++)
+
 		while (itD != dollar_rate.end())
 		{
 			if (itB->first < itD->first)
 			{
 				if (itD_last != dollar_rate.end()) //si ce n'est pas le premier tour et donc itD_last est bon
-					check_and_calcul(itB->first, itB->second, itD->second);
-				//std::cout << "normal CROSS {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
+					check_and_calcul(itB->first, itB->second, itD_last->second); //itD_last
 				else //sinon c est le premier tour et on doit prendre itD et non last
 					check_and_calcul(itB->first, itB->second, itD->second);
-				//std::cout << "first CROSS {" << itB->first << "} {" << itD->first << "}" << std::endl;
 
 				break;//??
 			}
@@ -276,7 +284,6 @@ int	main(int argc, char **argv)
 		//if (itD == dollar_rate.end() && !(itB->first < itD_last->first))
 		if (itD == dollar_rate.end())
 			check_and_calcul(itB->first, itB->second, itD->second);
-		//std::cout << "CROSS END {" << itB->first << "} {" << itD_last->first << "}" << std::endl;
 	}
 
 	std::cout << std::endl;
