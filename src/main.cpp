@@ -283,7 +283,7 @@ int	main(int argc, char **argv)
 		}
 		//if (itD == dollar_rate.end() && !(itB->first < itD_last->first))
 		if (itD == dollar_rate.end())
-			check_and_calcul(itB->first, itB->second, itD->second);
+			check_and_calcul(itB->first, itB->second, itD_last->second);
 	}
 
 	std::cout << std::endl;
