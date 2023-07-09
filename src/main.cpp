@@ -130,35 +130,34 @@ bool	correct_date(std::string date)
 
 	if (year < 2009 || year > 2023)
 	{
-		if (DEBUGG) std::cout << "year < 2009 || year > 2023" << std::endl;
+		if (DEBUGG) std::cout << "year < 2009 || year > 2023 " << std::endl;
 		return false;
 	}
 
-	if (year == 2023 || month > 6)
+	if (year == 2023 && month > 6)
 	{
-		if (DEBUGG) std::cout << "year == 2023 || month > 6\n";
+		if (DEBUGG) std::cout << "year == 2023 || month > 6 " << std::endl;
 		return false;
 	}
 
 	if (month < 1 || month > 12)
 	{
-		if (DEBUGG) std::cout << "month < 1 || month > 12" << std::endl;
+		if (DEBUGG) std::cout << "month < 1 || month > 12 " << std::endl;
 		return false;
 	}
 
-
 	if (day < 1 || day > 31)
 	{
-		if (DEBUGG) std::cout << "day < 1 || day > 31" << std::endl;
+		if (DEBUGG) std::cout << "day < 1 || day > 31 " << std::endl;
 		return false;
 	}
 
 
 	if (month == 4 || month == 6 || month == 9 || month == 11)
 	{
-		if (DEBUGG) std::cout <<"day < 1 || day > 31\n";
 		if (day > 30)
 		{
+			if (DEBUGG) std::cout <<"month == 4 || month == 6 || month == 9 || month == 11 ET day > 30\n";
 			std::cout << "day > 30" << std::endl;
 			return false;
 		}
@@ -189,15 +188,16 @@ bool	correct_date(std::string date)
 void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 {
 
+	std::cout << std::endl << "			=>  [" << Bdate << "]  <=" << std::endl;
+
 	if (!correct_date(Bdate) || Bvalue < 0 || Bvalue > 1000)
 	{
 		if (!correct_date(Bdate))
 		{
 			//std::cerr << "Error: bad input => " << Bdate << std::endl;
-			std::cout << "----------------------------" << std::endl;
-			std::cerr << "INCORRECT DATE" << std::endl;
+			std::cerr << Bdate << "] INCORRECT DATE" << std::endl;
+			std::cerr << "\n----------------------------" << std::endl;
 		}
-
 		if (Bvalue < 0)
 			std::cerr << "Error: not a positive number. (" << Bvalue << ")" << std::endl;
 		if (Bvalue > 1000)
@@ -205,9 +205,12 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 		return;
 	}
 
-	//(void)Drate;
-	double result = Bvalue * Drate; //check over the flow ?
-	std::cout << Bdate << " => " << Bvalue << " = " << result << "(" << Drate << ")" << std::endl;
+	(void)Drate;
+
+	//double result = Bvalue * Drate; //check over the flow ?
+
+	//std::cout << Bdate << " => " << Bvalue << " = " << result << "(" << Drate << ")" << std::endl;
+
 
 }
 
@@ -220,6 +223,7 @@ int	main(int argc, char **argv)
 	   return 1;
 	   }
 	 */
+
 	(void)argc;
 
 	//protect read
@@ -236,7 +240,7 @@ int	main(int argc, char **argv)
 
 	display_map(bitcoins, 1);
 
-	std::cout << "\n ----------------------- \n";
+	std::cout << "\n ##################################################### \n";
 	////////////////////////////////////////////
 	/*
 	   std::cout << "correct = " << correct_date(argv[2]) << std::endl;
@@ -278,3 +282,17 @@ int	main(int argc, char **argv)
 
 	return 0;
 }
+
+/*
+int	main(int argc, char **argv)
+{
+	(void)argc;
+
+	int result = correct_date(argv[1]);
+	if (result == 1)
+		std::cout << "Success" << std::endl;
+	if (result == 0)
+		std::cout << "FAIL" << std::endl;
+}
+*/
+
