@@ -96,22 +96,27 @@ bool	isOnlyDigits(std::string str)
 	return true;
 }
 
+#define DEBUGG 1
+
 bool	correct_date(std::string date)
 {
 	//TODO gerer le cas de la double date avec l'ajout des points ....	
 
 	if (date.size() != 10)
-	{ std::cout << "if (date.size() != 10)" << std::endl;
+	{
+		if (DEBUGG) std::cout << "if (date.size() != 10)" << std::endl;
 		return false;
 	}
 
 	if (!isOnlyDigits(date.substr(0,4) + date.substr(5,2) + date.substr(8,2)))
-	{ std::cout << "!Isdigitonly" << std::endl;
+	{
+		if (DEBUGG) std::cout << "!Isdigitonly" << std::endl;
 		return false;
 	}
 
 	if (date[4] != '-' || date[7] != '-')
-	{ std::cout << "Guillement" << std::endl;
+	{	
+		if (DEBUGG) std::cout << "Guillement" << std::endl;
 		return false;
 	}
 
@@ -123,37 +128,35 @@ bool	correct_date(std::string date)
 	int	month = std::atoi(month_str.c_str());
 	int	day = std::atoi(day_str.c_str());
 
-	std::cout << "\n\nYOOOOOOOOOOO" << std::endl;
-
 	if (year < 2009 || year > 2023)
 	{
-	std::cout << "AAAAAAAAAA" << std::endl;
+		if (DEBUGG) std::cout << "year < 2009 || year > 2023" << std::endl;
 		return false;
 	}
 
 	if (year == 2023 || month > 6)
 	{
-	std::cout << "BBBBBBBBBBB\n";
+		if (DEBUGG) std::cout << "year == 2023 || month > 6\n";
 		return false;
 	}
 
 	if (month < 1 || month > 12)
 	{
-		std::cout << "WWWWWHHHATTT" << std::endl;
+		if (DEBUGG) std::cout << "month < 1 || month > 12" << std::endl;
 		return false;
 	}
 
 
 	if (day < 1 || day > 31)
 	{
-		std::cout << "FFFFFFFFF" << std::endl;
+		if (DEBUGG) std::cout << "day < 1 || day > 31" << std::endl;
 		return false;
 	}
 
 
 	if (month == 4 || month == 6 || month == 9 || month == 11)
 	{
-		std::cout <<"CCCCCCCCCCCCCCC\n";
+		if (DEBUGG) std::cout <<"day < 1 || day > 31\n";
 		if (day > 30)
 		{
 			std::cout << "day > 30" << std::endl;
@@ -164,6 +167,7 @@ bool	correct_date(std::string date)
 
 	if (month == 2)
 	{
+		if (DEBUGG) std::cout << "month ==2\n" << std::endl;
 		if (day > 29)
 			return false;
 
@@ -184,13 +188,13 @@ bool	correct_date(std::string date)
 
 void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 {
-	std::cout << "----------------------------" << std::endl;
 
 	if (!correct_date(Bdate) || Bvalue < 0 || Bvalue > 1000)
 	{
 		if (!correct_date(Bdate))
 		{
 			//std::cerr << "Error: bad input => " << Bdate << std::endl;
+			std::cout << "----------------------------" << std::endl;
 			std::cerr << "INCORRECT DATE" << std::endl;
 		}
 
@@ -203,7 +207,6 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 
 	//(void)Drate;
 	double result = Bvalue * Drate; //check over the flow ?
-
 	std::cout << Bdate << " => " << Bvalue << " = " << result << "(" << Drate << ")" << std::endl;
 
 }
