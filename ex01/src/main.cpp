@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 
@@ -29,11 +28,16 @@ bool	is_operator(int c)
 
 bool	check_input(std::string input)
 {
+	if (is_operator(input[0]) || !is_operator(input[input.size() - 1]))
+		return false;
+
 	for (int i = 0; input[i]; i++)
 	{
 		if (input[i] < '0' && input[i] > '9')
 			if (!is_operator(input[i]))
 				return false;
+		if (i > 0 && is_operator(input[i]) && is_operator(input[i - 1]))
+			return false;
 	}
 	return true;
 }
@@ -73,8 +77,9 @@ int	main(int argc, char **argv)
 	}
 	//*/
 
-	//double result = 0;
+	double result = 0;
 	int current = 0;
+	bool	first_loop = true;
 
 	while (!RPN.empty())
 	{
@@ -82,10 +87,22 @@ int	main(int argc, char **argv)
 
 		current = RPN.top();
 
-		//if (is_operator(current))
-			
+		//if (!is_operator(current)
+
+		if (is_operator(current) && !first_loop)
+		{
+			if (current == '+')
+				result += current;
+			if (current == '-')
+				result -= current;
+			if (current == '*')
+				result *= current;
+			if (current == '/')
+				result /= current;
+		}
 
 		RPN.pop();
+		first_loop = false;
 	}
 
 	return 0;
