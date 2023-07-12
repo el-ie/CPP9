@@ -1,21 +1,6 @@
 #include <iostream>
 #include <string>
-
 #include <stack>
-
-#define PLUS 43
-#define MINUS 45
-#define DIVI 47
-#define MULTI 42
-
-/*
-enum OPERATOR {
-	PLUS = -42,
-	MINUS,
-	MULTI,
-	DIVI,
-};
-*/
 
 bool	is_operator(int c)
 {
@@ -36,20 +21,36 @@ bool	check_input(std::string input)
 
 	for (int i = 0; input[i]; i++)
 	{
-		if (input[i] < '0' && input[i] > '9')
-			if (!is_operator(input[i]))
-				return false;
-
-		if (input[i] < '0' && input[i] > '9')
+		if ( (input[i] < '0' && input[i] > '9')
+				&& (!is_operator(input[i])) )
+			return false;
+		else if (input[i] >= '0' && input[i] <= '9')
 			nb_count++;
-		if (is_operator(input[i]))
+		else if (is_operator(input[i]))
 			operators_count++;
+		else
+		{std::cerr << "Error OKKK" << std::endl;return 1;}//
 	}
 
-	if (nb_count != (operators_count - 1))
+	if (nb_count != (operators_count + 1))
 		return false;
 
 	return true;
+}
+
+void	display_stack(std::stack<double> stack)
+{
+	while (!stack.empty())
+	{
+		std::cout << "char [" << stack.top() << "]" << std::endl;
+		stack.pop();
+	}
+}
+
+int	error_message(void)
+{
+	std::cerr << "Error" << std::endl;
+	return 1;
 }
 
 int	main(int argc, char **argv)
@@ -63,60 +64,46 @@ int	main(int argc, char **argv)
 	if (!check_input(argv[1]))
 	{
 		std::cerr << "Error" << std::endl;
-		return 1;
+		//return 1;
 	}
 
-	std::stack<double>	RPN;
+	std::stack<double>	numbers;
 
 	std::string		line = argv[1];
 
-	for (int i = line.size() - 1; i >= 0; i--)
+	double	nb1 = 0;
+
+	for (int i = 0; line[i]; i++)
 	{
-		if (!is_operator(argv[1][i]))
-			RPN.push(static_cast<double>(argv[1][i] - 48));
-		else
-			RPN.push(static_cast<double>(argv[1][i]));
-
-	}
-
-	///*
-	while (!RPN.empty())
-	{
-		if (RPN.top() >= 0 && RPN.top() <= 9)
-			std::cout << "char [" << static_cast<char>(RPN.top() + 48) << "]" << std::endl;
-		else
-			std::cout << "char [" << static_cast<char>(RPN.top()) << "]" << std::endl;
-		RPN.pop();
-	}
-	//*/
-
-	double result = 0;
-	int current = 0;
-	bool	first_loop = true;
-
-	while (!RPN.empty())
-	{
-		std::cout << "char [" << RPN.top() << "]" << std::endl;
-
-		current = RPN.top();
-
-		//if (!is_operator(current)
-
-		if (is_operator(current) && !first_loop)
+		if (line[i] >= '0' && line[i] <= '9')
 		{
-			if (current == '+')
-				result += current;
-			if (current == '-')
-				result -= current;
-			if (current == '*')
-				result *= current;
-			if (current == '/')
-				result /= current;
+			numbers.push(static_cast<double>(argv[1][i] - 48));
 		}
+		else if (is_operator(line[i]))
+		{
+			if (numbers.size() < 2)
+				return error_message();
 
-		RPN.pop();
-		first_loop = false;
+			nb1 = numbers.top();
+			numbers.pop();
+
+			if (line[i] == '+')
+				nb1 += numbers.top();
+			if (line[i] == '-')
+				nb1 = numbers.top() - nb1;
+			if (line[i] == '*')
+				nb1 *= numbers.top();
+			if (line[i] == '/')
+				nb1 = numbers.top() / nb1;
+
+			numbers.pop();
+			numbers.push(nb1);
+		}
+		else
+			return error_message();
 	}
+
+	std::cout << "RESULT = " << nb1 << std::endl;
 
 	return 0;
 }
