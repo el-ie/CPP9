@@ -11,6 +11,12 @@ bool	is_operator(int c)
 	return false;
 }
 
+int	error_message(void)
+{
+	std::cerr << "Error" << std::endl;
+	return 1;
+}
+
 bool	check_input(std::string input)
 {
 	if (is_operator(input[0]) || !is_operator(input[input.size() - 1]))
@@ -21,6 +27,9 @@ bool	check_input(std::string input)
 
 	for (int i = 0; input[i]; i++)
 	{
+		if (input[i] == ' ')
+			continue;
+
 		if ( (input[i] < '0' && input[i] > '9')
 				&& (!is_operator(input[i])) )
 			return false;
@@ -29,28 +38,13 @@ bool	check_input(std::string input)
 		else if (is_operator(input[i]))
 			operators_count++;
 		else
-		{std::cerr << "Error OKKK" << std::endl;return 1;}//
+			error_message();
 	}
 
 	if (nb_count != (operators_count + 1))
 		return false;
 
 	return true;
-}
-
-void	display_stack(std::stack<double> stack)
-{
-	while (!stack.empty())
-	{
-		std::cout << "char [" << stack.top() << "]" << std::endl;
-		stack.pop();
-	}
-}
-
-int	error_message(void)
-{
-	std::cerr << "Error" << std::endl;
-	return 1;
 }
 
 int	main(int argc, char **argv)
@@ -64,7 +58,7 @@ int	main(int argc, char **argv)
 	if (!check_input(argv[1]))
 	{
 		std::cerr << "Error" << std::endl;
-		//return 1;
+		return 1;
 	}
 
 	std::stack<double>	numbers;
@@ -75,6 +69,9 @@ int	main(int argc, char **argv)
 
 	for (int i = 0; line[i]; i++)
 	{
+		if (line[i] == ' ')
+			continue;
+
 		if (line[i] >= '0' && line[i] <= '9')
 		{
 			numbers.push(static_cast<double>(argv[1][i] - 48));
@@ -97,13 +94,17 @@ int	main(int argc, char **argv)
 				nb1 = numbers.top() / nb1;
 
 			numbers.pop();
-			numbers.push(nb1);
+			if (line[i + 1])
+				numbers.push(nb1);
 		}
 		else
 			return error_message();
 	}
 
-	std::cout << "RESULT = " << nb1 << std::endl;
+	if (!numbers.empty())
+		error_message();
+
+	std::cout << nb1 << std::endl;
 
 	return 0;
 }
