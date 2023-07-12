@@ -30,15 +30,25 @@ bool	check_input(std::string input)
 {
 	if (is_operator(input[0]) || !is_operator(input[input.size() - 1]))
 		return false;
+		
+	int nb_count = 0;
+	int operators_count = 0;
 
 	for (int i = 0; input[i]; i++)
 	{
 		if (input[i] < '0' && input[i] > '9')
 			if (!is_operator(input[i]))
 				return false;
-		if (i > 0 && is_operator(input[i]) && is_operator(input[i - 1]))
-			return false;
+
+		if (input[i] < '0' && input[i] > '9')
+			nb_count++;
+		if (is_operator(input[i]))
+			operators_count++;
 	}
+
+	if (nb_count != (operators_count - 1))
+		return false;
+
 	return true;
 }
 
@@ -72,7 +82,10 @@ int	main(int argc, char **argv)
 	///*
 	while (!RPN.empty())
 	{
-		std::cout << "char [" << RPN.top() << "]" << std::endl;
+		if (RPN.top() >= 0 && RPN.top() <= 9)
+			std::cout << "char [" << static_cast<char>(RPN.top() + 48) << "]" << std::endl;
+		else
+			std::cout << "char [" << static_cast<char>(RPN.top()) << "]" << std::endl;
 		RPN.pop();
 	}
 	//*/

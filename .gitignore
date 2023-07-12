@@ -1,6 +1,8 @@
 tags
 *.swp
 gitignore
+.gitignore
 btc
 obj
 wallet*
+RPN

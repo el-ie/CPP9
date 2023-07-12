@@ -1,13 +1,12 @@
-#-mkup-auto-sources-###############################################011906100723#
+#-mkup-auto-sources-###############################################481907110723#
 SRC_DIR		=	src
 
 EXTENSION	=	".cpp"
 SRC_LIST	=	$(addsuffix $(EXTENSION), \
-				RPN \
 				main \
 				)
 SRC			=	$(addprefix $(SRC_DIR)/, $(SRC_LIST))
-#-mkup-auto-sources-###############################################011906100723#
+#-mkup-auto-sources-###############################################481907110723#
 
 INC_DIR		= 	.
 OBJ_DIR		=	obj
