@@ -30,13 +30,15 @@ void	display(std::vector<int> vec, int range)
 
 void	johnson(std::vector<int> & vec, int range, char lettre)
 {
+	if (range == 1)
+		std::cout << std::endl;
 
 	std::cout << lettre << " ";
 	display(vec, range);
 
 	if (range == 1)
 	{
-		std::cout << "      ------------------" << std::endl;
+		//std::cout << "      ------------------" << std::endl;
 		std::cout << "            pending:" << std::endl;
 		return;
 	}
@@ -61,14 +63,14 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	johnson(vec, range / 2, lettre + 1);
 
 	std::cout << lettre << " ";
-	if (range != vec.size())
-	{
-		for (int i = range; vec[i]; i++)
-			std::cout << vec[i] << " ";
-	}
+
+	for (int i = middle; i < (range - 1); i++)
+		std::cout << vec[i] << " ";
+
 	if (range % 2 != 0)
 		std::cout << "[" << vec[range - 1] << "]" << std::endl;
-	std::cout << std::endl;
+	else
+		std::cout << vec[range - 1] << std::endl;
 
 }
 
