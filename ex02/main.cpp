@@ -12,16 +12,17 @@ void	display(std::vector<int> vec, int range)
 	}
 
 	int j = 0;
-	for (std::vector<int>::iterator i = vec.begin(); i != vec.end(); i++)
+	//for (std::vector<int>::iterator i = vec.begin(); i != vec.end(); i++)
+	while (j < (range * 2) && j < vec.size())
 	{
 		if (j == (range / 2))
 			std::cout << " -";
 		if (j == range)
-			std::cout << "     ";
+			std::cout << "     pending: ";
 		if (j == (range - 1) && range % 2 != 0)
-			std::cout << " {" << *i << "}";
+			std::cout << " {" << vec[j] << "}";
 		else
-			std::cout << " " << *i;
+			std::cout << " " << vec[j];
 
 		j++;
 	}
@@ -36,10 +37,12 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	std::cout << lettre << " ";
 	display(vec, range);
 
+
 	if (range == 1)
 	{
+		std::cout << std::endl;
 		//std::cout << "      ------------------" << std::endl;
-		std::cout << "            pending:" << std::endl;
+		//std::cout << "            pending:" << std::endl;
 		return;
 	}
 
@@ -63,6 +66,10 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	johnson(vec, range / 2, lettre + 1);
 
 	std::cout << lettre << " ";
+	display(vec, range);
+
+/*
+	std::cout << lettre << " ";
 
 	for (int i = middle; i < (range - 1); i++)
 		std::cout << vec[i] << " ";
@@ -71,6 +78,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		std::cout << "[" << vec[range - 1] << "]" << std::endl;
 	else
 		std::cout << vec[range - 1] << std::endl;
+*/
 
 }
 
@@ -98,6 +106,8 @@ int	main(int argc, char **argv)
 
 	char lettre = 'A';
 	johnson(vec, vec.size(), lettre);
+
+	std::cout << std::endl;
 
 	//int middle = vec.size() / 2;
 
