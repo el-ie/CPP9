@@ -19,8 +19,8 @@ void	display(std::vector<int> vec, int range, int tiret, int display_range, int 
 			std::cout << " -";
 		if (j == range && display_pendings)
 			std::cout << "     pending: ";
-		//if (j == range && !display_pendings)
-		//	std::cout << " _";
+		if (j == range && !display_pendings)
+			std::cout << " _";
 		if (j == (range - 1) && range % 2 != 0)
 			std::cout << " {" << vec[j] << "}";
 		else
@@ -95,8 +95,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	//----------------------------------
 
 	if (range == vec.size() || range == vec.size() - 1)
-		return;
-	if (range == 8)
 	{
 		std::cout << "ENDDD\n";
 		display(vec, range, 0, 0, 0);
@@ -105,14 +103,16 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	std::cout << lettre << " ";
 
-
-	display(vec, range, 1, 0, 0);
+	display(vec, range, 0, 0, 0);
 
 	int j = range ; // = middle?
 	//std::cout << "R" << range << "J" << j << "\n";
 	std::vector<int>::iterator it;
 
-	//RAJOUTER la prise en compte des laisses de cote quand c est impair
+	//RESTEEEEE :
+
+	// RAJOUTER la prise en compte des laisses de cote quand c est impair
+	// UTILISER LA SUITE DE JACOBSTAL pour les index des pendings
 
 	//while ((is_even(range) && j < range - 1) || (!is_even(range) && j < range - 2))
 	
@@ -128,11 +128,11 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		//si j == range c est que j est au debut des pendings et il doit donc rester a sa place
 		if (it == vec.end() || (*it) < vec[j])
 		{
-			std::cout << "@ ";
+			//std::cout << "@ ";
 			//if (j == range + loop)
 			if (it + 1 == vec.begin() + j)
 			{
-				std::cout << "J" << j << " stay" << std::endl;
+				//std::cout << "J" << j << " stay" << std::endl;
 				j++;
 				loop++;
 				continue;
@@ -147,7 +147,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		}
 		else
 		{
-			std::cout << "# ";
+			//std::cout << "# ";
 			move_element(vec, vec.begin() + j, it);
 
 			if (range != vec.size())
@@ -155,16 +155,16 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 			//if range != vec.size() bouger symetriquement les pendings des couches superieurs
 		}
 
-		std::cout << "J" << j << " ";
-		display(vec, range, 1, 0, 0);
-
-		//std::cout << "J[" << j << "] UNPREDICTABLE CASE" << std::endl;
+		//std::cout << "J" << j << " ";
+		//display(vec, range, 1, 0, 0);
 
 		j++;
 		loop++;
 	}
 
-	//display(vec, range, 1, 0);
+	std::cout << "  ";
+	display(vec, range, 0, 0, 0);
+
 	std::cout << "----------------\n";
 
 }
