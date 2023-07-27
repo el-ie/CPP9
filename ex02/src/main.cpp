@@ -140,20 +140,19 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	while (j < range * 2)
 	{
+		std::cout << ">";
+		display(vec, range, 0, 0, 0);
+		std::cout << "J" << j << " " << "{" << vec[j] << "} " ; 
 		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous //middle - 1, -1 a tester
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[j]);
 
 		if (*it > vec[j])
 		{
-			//std::cout << "# ";
 			move_element(vec, vec.begin() + j, it);
-
-			if (range != vec.size())
-				move_element(vec, vec.begin() + j + (range * 2), it + (range * 2));
-			//if range != vec.size() bouger symetriquement les pendings des couches superieurs
+			if (range * 2 != vec.size() && range * 2 != vec.size() + 1)
+				move_element(vec, vec.begin() + j + (range * 2), it + (range * 2));//if (range != vec.size())
 		}
 
-		std::cout << "J" << j << " ";
 		display(vec, range, 0, 0, 0);
 
 		j++;
@@ -162,7 +161,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	std::cout << "  ";
 	display(vec, range, 0, 0, 0);
-	std::cout << "NOT EVEN\n";
 
 	std::cout << "----------------\n";
 
@@ -170,8 +168,8 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 /*
 //j est plus grand que tout le reste, vec.end() ne devrait jamais etre renvoye puisqu on ne donne jamais vec.end() en deuxieme argument (tests sur!) //si j == range c est que j est au debut des pendings et il doit donc rester a sa place
-   if ((*it) <= vec[j])//it = vec.end()
-   {
+if ((*it) <= vec[j])//it = vec.end()
+{
 //std::cout << "@ "; //if (j == range + loop)
 if (it + 1 == vec.begin() + j)//std::cout << "J" << j << " stay" << std::endl;
 { j++; loop++; continue; }
