@@ -177,16 +177,20 @@ int	main(int argc, char **argv)
 		i++;
 	}
 
+	int saved_size = vec.size();
+
 	char lettre = 'A';
 	johnson(vec, vec.size(), lettre);
 
 	std::cout << std::endl;
 
-	if (isSorted(vec)) {
-		std::cout << "sorted\n";
-	} else {
+	if (vec.size() != saved_size)
+		std::cout << "!! SIZE OF VECTOR CHANGED" << std::endl;
+	else if (!isSorted(vec))
 		std::cout << "NOT SORTED $$$$$$$$$$$$$$\n";
-	}
+	else
+		std::cout << "sorted\n";
+
 
 	return 0;
 }
