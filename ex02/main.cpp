@@ -110,6 +110,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	std::vector<int>::iterator it;
 
 	//RESTEEEEE :
+//test
 
 	// RAJOUTER la prise en compte des laisses de cote quand c est impair
 	// UTILISER LA SUITE DE JACOBSTAL pour les index des pendings
@@ -164,6 +165,9 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	std::cout << "  ";
 	display(vec, range, 0, 0, 0);
+
+	if (range % 2 != 0)
+		std::cout << "NOT EVEN\n";
 
 	std::cout << "----------------\n";
 
