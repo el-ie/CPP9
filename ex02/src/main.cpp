@@ -11,7 +11,6 @@ void	display(std::vector<int> vec, int range, int tiret, int display_range, int 
 	}
 
 	int j = 0;
-	//for (std::vector<int>::iterator i = vec.begin(); i != vec.end(); i++)
 	while (j < (range * 2) && j < vec.size())
 	{
 		if (j == (range / 2) && tiret)
@@ -31,11 +30,6 @@ void	display(std::vector<int> vec, int range, int tiret, int display_range, int 
 		std::cout << "     range(" << range << ")";
 	std::cout << std::endl;
 }
-
-/* int	my_binary_search(std::vector<int> & vec, int range, int number)
-{
-	return 0;
-}*/
 
 bool	is_even(int nb)
 {
@@ -58,8 +52,6 @@ void	move_element(std::vector<int> & vec, std::vector<int>::iterator from, std::
 	vec.insert(to, tmp);
 }
 
-//0, 1, 1, 3, 5, 11, 21, 43
-
 void	johnson(std::vector<int> & vec, int range, char lettre)
 {
 	if (range == 1)
@@ -71,8 +63,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	if (range == 1)
 	{
 		std::cout << std::endl;
-		//std::cout << "      ------------------" << std::endl;
-		//std::cout << "            pending:" << std::endl;
 		return;
 	}
 
@@ -80,7 +70,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	for (int i = 0; i < middle; i++)
 	{
-		//if (!(vec[i] > vec[i + middle]))
 		if ((vec[i] > vec[i + middle]))
 		{
 			std::swap(vec[i], vec[i + middle]);
@@ -97,12 +86,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	//----------------------------------
 	johnson(vec, range / 2, lettre + 1);
 	//----------------------------------
-
-	//RESTEEEEE :
-	//test
-
-	// RAJOUTER la prise en compte des laisses de cote quand c est impair
-	// UTILISER LA SUITE DE JACOBSTAL pour les index des pendings
 
 	std::vector<int>::iterator it;
 
@@ -121,9 +104,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		std::cout << "          ";
 		display(vec, range, 0, 1, 0);
 	}
-	//while ((is_even(range) && j < range - 1) || (!is_even(range) && j < range - 2))
 
-	//if (range == vec.size() || range == vec.size() - 1)
 	if (range == vec.size())
 	{
 		std::cout << "ENDDD\n";
@@ -134,10 +115,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	std::cout << lettre << " ";
 
 	display(vec, range, 0, 1, 0);
-
-
-/* NOMBRE DE COTE
-	*/
 
 	int j = range;
 	int loop = 0;
@@ -162,7 +139,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		}
 
 		//display(vec, range, 0, 0, 0);
-
 		j++;
 		loop++;
 	}
@@ -203,8 +179,6 @@ int	main(int argc, char **argv)
 		i++;
 	}
 
-	//vec.insert(vec.begin() + 1, 14);
-
 	char lettre = 'A';
 	johnson(vec, vec.size(), lettre);
 
@@ -215,14 +189,6 @@ int	main(int argc, char **argv)
 	} else {
 		std::cout << "NOT SORTED $$$$$$$$$$$$$$\n";
 	}
-
-	//int middle = vec.size() / 2;
-
-	/* normalement recursif, pourquoi
-	   for (int i = 0; i < middle; i++)
-	   if (!(vec[i + middle] > vec[i]))
-	   std::swap(vec[i], vec[i + middle]); */
-
 
 	return 0;
 }
