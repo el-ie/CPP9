@@ -95,7 +95,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		display(vec, range, 0, 1, 0);
 		std::cout << "          tri du restant\n";
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 2), vec[range - 1]);
-		if (vec[range - 1] < *it) //add//it != vec.end()
+		if (vec[range - 1] <= *it) //add//it != vec.end()
 		{
 			move_element(vec, vec.begin() + range - 1, it);
 			if (range != vec.size())
