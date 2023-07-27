@@ -4,7 +4,6 @@
 
 void	display(std::vector<int> vec, int range, int tiret, int display_range, int display_pendings)
 {
-
 	if (range == 1)
 	{
 		std::cout << "   ==" << vec[0] << "==" << std::endl;
@@ -138,6 +137,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	int j = range;
 	int loop = 0;
 
+
 	while (j < range * 2)
 	{
 		std::cout << ">";
@@ -213,6 +213,15 @@ if (range != vec.size())
  */
 #include <cstdlib>
 
+bool isSorted(const std::vector<int>& vec) {
+    for (std::size_t i = 1; i < vec.size(); ++i) {
+        if (vec[i-1] > vec[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 int	main(int argc, char **argv)
 {
 	std::vector<int> vec;
@@ -237,6 +246,12 @@ int	main(int argc, char **argv)
 	johnson(vec, vec.size(), lettre);
 
 	std::cout << std::endl;
+
+	if (isSorted(vec)) {
+		std::cout << "sorted\n";
+	} else {
+		std::cout << "NOT SORTED $$$$$$$$$$$$$$\n";
+	}
 
 	//int middle = vec.size() / 2;
 
