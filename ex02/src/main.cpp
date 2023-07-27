@@ -47,6 +47,11 @@ bool	is_even(int nb)
 
 void	move_element(std::vector<int> & vec, std::vector<int>::iterator from, std::vector<int>::iterator to)
 {
+	if (from == vec.end())//delete
+	{
+		std::cerr << "ERROR move element vec.end" << std::endl;
+		return;
+	}
 	int tmp = *from;
 
 	vec.erase(from);
@@ -94,8 +99,19 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	johnson(vec, range / 2, lettre + 1);
 	//----------------------------------
 
-	if (range == vec.size() || range == vec.size() - 1)
+	//RESTEEEEE :
+	//test
+
+	// RAJOUTER la prise en compte des laisses de cote quand c est impair
+	// UTILISER LA SUITE DE JACOBSTAL pour les index des pendings
+
+	//while ((is_even(range) && j < range - 1) || (!is_even(range) && j < range - 2))
+
+	//if (range == vec.size() || range == vec.size() - 1)
+	if (range == vec.size())
 	{
+		if (vec.size() % 2 != 0)
+			(void)range;// insert last element
 		std::cout << "ENDDD\n";
 		display(vec, range, 0, 0, 0);
 		return;
@@ -103,50 +119,31 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	std::cout << lettre << " ";
 
-	display(vec, range, 0, 0, 0);
+	display(vec, range, 0, 1, 0);
 
-	int j = range ; // = middle?
-	//std::cout << "R" << range << "J" << j << "\n";
 	std::vector<int>::iterator it;
 
-	//RESTEEEEE :
-//test
+/* NOMBRE DE COTE
+	if (range % 2 != 0 && range != vec.size() && range > 2) //range > 2 securite??
+	{
+		it = std::lower_bound(vec.begin(), vec.begin() + (range - 2), vec[range - 1]);
+		if (vec[range - 1] < *it) //add//it != vec.end()
+		{
+			move_element(vec, vec.begin() + range - 1, it);
+			move_element(vec, vec.begin() + (range * 2) - 1 + , );
+		}
+	}
+	*/
 
-	// RAJOUTER la prise en compte des laisses de cote quand c est impair
-	// UTILISER LA SUITE DE JACOBSTAL pour les index des pendings
-
-	//while ((is_even(range) && j < range - 1) || (!is_even(range) && j < range - 2))
-	
+	int j = range;
 	int loop = 0;
 
 	while (j < range * 2)
 	{
-		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous
-		//middle - 1, -1 a tester
+		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous //middle - 1, -1 a tester
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[j]);
 
-		//j est plus grand que tout le reste, vec.end() ne devrait jamais etre renvoye puisqu on ne donne jamais vec.end() en deuxieme argument (tests sur!)
-		//si j == range c est que j est au debut des pendings et il doit donc rester a sa place
-		if (it == vec.end() || (*it) < vec[j])
-		{
-			//std::cout << "@ ";
-			//if (j == range + loop)
-			if (it + 1 == vec.begin() + j)
-			{
-				//std::cout << "J" << j << " stay" << std::endl;
-				j++;
-				loop++;
-				continue;
-			}
-
-			move_element(vec, vec.begin() + j, vec.begin() + range + loop);
-
-			if (range != vec.size())
-				move_element(vec, vec.begin() + j + (range * 2), vec.begin() + range + loop);
-
-			//if range != vec.size() bouger symetriquement les pendings des couches superieurs
-		}
-		else
+		if (*it > vec[j])
 		{
 			//std::cout << "# ";
 			move_element(vec, vec.begin() + j, it);
@@ -156,8 +153,8 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 			//if range != vec.size() bouger symetriquement les pendings des couches superieurs
 		}
 
-		//std::cout << "J" << j << " ";
-		//display(vec, range, 1, 0, 0);
+		std::cout << "J" << j << " ";
+		display(vec, range, 0, 0, 0);
 
 		j++;
 		loop++;
@@ -165,15 +162,31 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	std::cout << "  ";
 	display(vec, range, 0, 0, 0);
-
-	if (range % 2 != 0)
-		std::cout << "NOT EVEN\n";
+	std::cout << "NOT EVEN\n";
 
 	std::cout << "----------------\n";
 
 }
 
+/*
+//j est plus grand que tout le reste, vec.end() ne devrait jamais etre renvoye puisqu on ne donne jamais vec.end() en deuxieme argument (tests sur!) //si j == range c est que j est au debut des pendings et il doit donc rester a sa place
+   if ((*it) <= vec[j])//it = vec.end()
+   {
+//std::cout << "@ "; //if (j == range + loop)
+if (it + 1 == vec.begin() + j)//std::cout << "J" << j << " stay" << std::endl;
+{ j++; loop++; continue; }
 
+std::cout << "ON NE DEVRAIT PAS ETE LA\n";
+
+move_element(vec, vec.begin() + j, vec.begin() + range + loop);
+
+if (range != vec.size())
+move_element(vec, vec.begin() + j + (range * 2), vec.begin() + range + loop);
+
+//if range != vec.size() bouger symetriquement les pendings des couches superieurs
+}
+
+ */
 /*
    int number;
    for (int i = middle; i < range; i++)
