@@ -122,11 +122,9 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	while (j < range * 2)
 	{
-	/*
 		std::cout << ">";
 		display(vec, range, 0, 0, 0);
 		std::cout << "J" << j << " " << "{" << vec[j] << "} " ; 
-	 */
 
 		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous //middle - 1, -1 a tester
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[j]);
@@ -134,11 +132,11 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		if (*it >= vec[j])
 		{
 			move_element(vec, vec.begin() + j, it);
-			if (range * 2 != vec.size() && range * 2 != vec.size() + 1)
+			if (range * 2 != vec.size() && range * 2 != vec.size() - 1)
 				move_element(vec, vec.begin() + j + (range * 2), it + (range * 2));//if (range != vec.size())
 		}
 
-		//display(vec, range, 0, 0, 0);
+		display(vec, range, 0, 0, 0);
 		j++;
 		loop++;
 	}
