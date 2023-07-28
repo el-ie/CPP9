@@ -12,3 +12,4 @@ else
 	echo -n "."
 fi
 done
+echo SUCESS
