@@ -206,15 +206,17 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 		biggest = (*it < vec[real_index]) ? 1 : 0;
 		int distance = std::distance(it + biggest, vec.begin() + real_index);
+		std::cout << "distance = " << distance << std::endl;
+
+		if (lettre != 'B' && lettre != 'A')
+		{
+			std::cout << "mirror: from " << real_index + (range * 2) << std::endl;
+			//erreur : les nombres precedemment inserted peuvent etre a gauche ou droite de it, il faut l index precis de it
+			move_element(vec, vec.begin() + real_index + (range * 2), vec.begin() + real_index + (range * 2) - distance);//if (range != vec.size())
+		}
 
 		vec.insert(it + biggest, vec[real_index]);
 		inserted++;
-		if (lettre != 'B' && lettre != 'A')
-		{
-		std::cout << "mirror: from " << real_index + (range * 2) + inserted << std::endl;
-		//erreur : les nombres precedemment inserted peuvent etre a gauche ou droite de it, il faut l index precis de it
-			move_element(vec, vec.begin() + real_index + (range * 2) + inserted, vec.begin() + real_index + (range * 2) + inserted - distance);//if (range != vec.size())
-			}
 
 		//display(vec, range, 0, 0, 0);
 		loop++;
@@ -273,12 +275,12 @@ int	main(int argc, char **argv)
 
 	std::vector<int> copy = vec;
 	std::sort(copy.begin(), copy.end());
-	
+
 	/*
-	for (std::vector<int>::iterator it = copy.begin(); it != copy.end(); it++)
-		std::cout << *it << " ";
-	std::cout << std::endl;
-	*/
+	   for (std::vector<int>::iterator it = copy.begin(); it != copy.end(); it++)
+	   std::cout << *it << " ";
+	   std::cout << std::endl;
+	 */
 
 	char lettre = 'A';
 	johnson(vec, vec.size(), lettre);
@@ -288,6 +290,8 @@ int	main(int argc, char **argv)
 		std::cout << "ERROR the vectors are not equal" << std::endl;
 		return 1;
 	}
+	else
+		std::cout << "vectors are equal +++++" << std::endl;
 
 	std::cout << std::endl;
 
