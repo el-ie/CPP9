@@ -168,9 +168,9 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	int jacob_index = 0;
 	int real_index = range * 2 - 1;
-	int shift = 0;
 
-	int upper;
+	int shift = 0;
+	int upper = 0;
 
 	while (loop < range)
 	{
@@ -203,18 +203,15 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		jacob_index = get_next_jacobsthal_index(jacob_index);
 		
 		while (jacob_index >= range)//keep ???????? pour revenir de l exces jacobsthal a la fin des nombres
+		{
+			shift++;//let ?
 			jacob_index = get_next_jacobsthal_index(jacob_index);
+		}
 
 		upper = get_upper_jacobsthal(jacob_index);
+		upper -= shift;
 
-		// > ou >=, verifier avec 10 9 8 7 6 5
-		while (upper >= range)
-			upper--;
-		
-		//if (!is_jacobsthal_number(jacob_index + 1))
-		//real_index = (range * 2 - 1) - jacob_index - (get_upper_jacobsthal(jacob_index) - jacob_index - 1);
-
-		real_index = (range * 2 - 1) - jacob_index - (upper - jacob_index - 1);
+		real_index = (range * 2 - 1) - jacob_index - (upper - jacob_index - 1) + loop;
 
 	}
 
