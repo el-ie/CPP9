@@ -207,6 +207,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 }
 
 #include <cstdlib>
+#include <algorithm>
 
 bool isSorted(const std::vector<int>& vec) {
     for (std::size_t i = 1; i < vec.size(); ++i) {
@@ -216,7 +217,60 @@ bool isSorted(const std::vector<int>& vec) {
     }
     return true;
 }
+int	main(int argc, char **argv)
+{
+	std::vector<int> vec;
 
+	if (argc < 2)
+	{
+		std::cerr << "Error" << std::endl;
+		return 1;
+	}
+
+	int i = 1;
+
+	while (argv[i])
+	{
+		vec.push_back(std::atoi(argv[i]));
+		i++;
+	}
+
+	int saved_size = vec.size();
+
+	std::vector<int> copy = vec;
+	std::sort(copy.begin(), copy.end());
+
+	/*
+	   for (std::vector<int>::iterator it = copy.begin(); it != copy.end(); it++)
+	   std::cout << *it << " ";
+	   std::cout << std::endl;
+	 */
+
+	char lettre = 'A';
+	johnson(vec, vec.size(), lettre);
+
+	if (!std::equal(copy.begin(), copy.end(), vec.begin()))
+	{
+		std::cout << "ERROR the vectors are not equal" << std::endl;
+		return 1;
+	}
+	else
+		std::cout << "vectors are equal +++++" << std::endl;
+
+	std::cout << std::endl;
+
+	if (vec.size() != saved_size)
+		std::cout << "!! SIZE OF VECTOR CHANGED" << std::endl;
+	else if (!isSorted(vec))
+		std::cout << "NOT SORTED $$$$$$$$$$$$$$\n";
+	else
+		std::cout << "sorted\n";
+
+
+	return 0;
+}
+
+/*
 int	main(int argc, char **argv)
 {
 	std::vector<int> vec;
@@ -252,3 +306,4 @@ int	main(int argc, char **argv)
 
 	return 0;
 }
+*/
