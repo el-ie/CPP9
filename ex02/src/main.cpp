@@ -109,6 +109,10 @@ void	move_element(std::vector<int> & vec, std::vector<int>::iterator from, std::
 		std::cerr << "ERROR move element vec.end" << std::endl;
 		return;
 	}
+
+	if (from == to)
+		return;
+
 	int tmp = *from;
 
 	vec.erase(from);
@@ -163,7 +167,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	std::vector<int>::iterator it;
 
-	int j = range;
 	int loop = 0;
 
 	int jacob_index = 0;
@@ -171,6 +174,9 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	int shift = 0;
 	int upper = 0;
+
+	int size;
+	int offset_right;
 
 	while (loop < range)
 	{
@@ -181,16 +187,18 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous //middle - 1, -1 a tester
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[real_index]);
 
-		//if (*it >= vec[j])
-		//{..........................
+		offset_right = (*it < vec[real_index]) ? 1 : 0;
 
-		if (*it >= vec[real_index])
-			move_element(vec, vec.begin() + real_index, it);
-		else if (it + 1 != vec.begin() + real_index)
-			move_element(vec, vec.begin() + real_index, it + 1);
-			
-		//if (range * 2 != vec.size() && range * 2 != vec.size() - 1)
-			//move_element(vec, vec.begin() + j + (range * 2), it + (range * 2));//if (range != vec.size())
+		move_element(vec, vec.begin() + real_index, it + offset_right);
+
+		/*
+		size = range * 2;
+		while (size != vec.size())
+		{
+			move_element(vec, vec.begin() + j + (range * 2), it + (range * 2));//if (range != vec.size())
+			size *= 2;
+		}
+		*/
 
 		display(vec, range, 0, 0, 0);
 
