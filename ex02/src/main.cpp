@@ -5,6 +5,7 @@
 //delete ? :
 #include <cstdlib>
 #include <algorithm>
+#include <climits>
 
 //if nb is jacobsthal it will return the next upper jacobsthal
 int	get_upper_jacobsthal(int nb)
@@ -79,8 +80,11 @@ void	display(std::vector<int> vec, int range, int tiret, int display_range, int 
 			std::cout << "     pending: ";
 		if (j == range && !display_pendings)
 			std::cout << " _";
-		if (j == (range - 1) && range % 2 != 0)
+
+		if (j == (range - 1) && range % 2 != 0 && vec[j] != INT_MAX)
 			std::cout << " {" << vec[j] << "}";
+		else if (vec[j] == INT_MAX)
+			std::cout << " X";
 		else
 			std::cout << " " << vec[j];
 
@@ -269,7 +273,7 @@ int	main(int argc, char **argv)
 	int next_power_two = get_next_power_two(vec.size());
 
 	while (vec.size() < next_power_two)
-		vec.push_back(-1);
+		vec.push_back(INT_MAX);
 
 	/*
 	   for (std::vector<int>::iterator it = copy.begin(); it != copy.end(); it++)
@@ -280,8 +284,9 @@ int	main(int argc, char **argv)
 	char lettre = 'A';
 	johnson(vec, vec.size(), lettre);
 
-	while (*(vec.begin()) == -1)
-		vec.erase(vec.begin());
+	std::vector<int>::iterator it = find(vec.begin(), vec.end(), INT_MAX);
+	if (it != vec.end())
+		vec.erase(it, vec.end());
 	
 	display(vec, vec.size(), 0, 0, 0);
 
