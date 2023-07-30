@@ -122,6 +122,8 @@ void	move_element(std::vector<int> & vec, std::vector<int>::iterator from, std::
 
 void	johnson(std::vector<int> & vec, int range, char lettre)
 {
+	int size = range;
+
 	if (range == 1)
 		std::cout << std::endl;
 
@@ -142,14 +144,20 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		{
 			std::swap(vec[i], vec[i + middle]);
 
-			if (range != vec.size())
-				std::swap(vec[i + range], vec[i + middle + range]);
+			while (size != vec.size())
+			{
+				std::swap(vec[i + size], vec[i + middle + size]);
+				size += range;//+ et non * voir graphique, expenentialite des pairs
+			}
 
 		}
 	}
 
 	std::cout << "  ";
 	display(vec, range, 1, 1, 1);
+	std::cout << "                 ";
+	display(vec, 100, 0, 0, 0);
+	std::cout << "------------------------" << std::endl;
 
 	//----------------------------------
 	johnson(vec, range / 2, lettre + 1);
@@ -175,14 +183,13 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	int shift = 0;
 	int upper = 0;
 
-	int size;
 	int offset_right;
 
 	while (loop < range)
 	{
-		std::cout << ">";
-		display(vec, range, 0, 0, 0);
-		std::cout << "                  jacob(" << jacob_index << ") real(" << real_index << ")" << std::endl;
+		//std::cout << ">";
+		//display(vec, range, 0, 0, 0);
+		//std::cout << "                  jacob(" << jacob_index << ") real(" << real_index << ")" << std::endl;
 
 		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous //middle - 1, -1 a tester
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[real_index]);
@@ -191,23 +198,21 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 		move_element(vec, vec.begin() + real_index, it + offset_right);
 
-		/*
 		size = range * 2;
 		while (size != vec.size())
 		{
-			move_element(vec, vec.begin() + j + (range * 2), it + (range * 2));//if (range != vec.size())
-			size *= 2;
+			move_element(vec, vec.begin() + real_index + size, it + offset_right + size);//if (range != vec.size())
+			size += range * 2; //c est bien + car exponentialite des pairs
 		}
-		*/
 
-		display(vec, range, 0, 0, 0);
+		//display(vec, range, 0, 0, 0);
 
 		loop++; //ICI???
 
 		if (!(loop < range))
 			return;
 
-		std::cout << "J" << jacob_index << " ";
+		//std::cout << "J" << jacob_index << " ";
 		jacob_index = get_next_jacobsthal_index(jacob_index);
 		
 		while (jacob_index >= range)//keep ???????? pour revenir de l exces jacobsthal a la fin des nombres
