@@ -124,6 +124,8 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	for (int i = 0; i < middle; i++)
 	{
+		if (vec[i + middle] == -1)
+			break;
 		if ((vec[i] > vec[i + middle]))
 		{
 			std::swap(vec[i], vec[i + middle]);
@@ -172,13 +174,16 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 	int index = 0;
 
-	while (j < range * 2)
+	while (loop < range)
 	{
-	/*
-		std::cout << ">";
-		display(vec, range, 0, 0, 0);
-		std::cout << "J" << j << " " << "{" << vec[j] << "} " ; 
-	*/
+		/*
+		   std::cout << ">";
+		   display(vec, range, 0, 0, 0);
+		   std::cout << "J" << j << " " << "{" << vec[j] << "} " ; 
+		 */
+
+		if (vec[j] == -1)
+			return;
 
 		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous //middle - 1, -1 a tester
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[j]);
@@ -217,6 +222,20 @@ bool isSorted(const std::vector<int>& vec) {
     }
     return true;
 }
+
+int	get_next_power_two(int nb)
+{
+	if (nb < 2)
+		return 0;
+	
+	int result = 2;
+
+	while (result < nb)
+		result *= 2;
+
+	return result;
+}
+
 int	main(int argc, char **argv)
 {
 	std::vector<int> vec;
@@ -234,11 +253,16 @@ int	main(int argc, char **argv)
 		vec.push_back(std::atoi(argv[i]));
 		i++;
 	}
-
+	// si un seul element return
 	int saved_size = vec.size();
 
 	std::vector<int> copy = vec;
 	std::sort(copy.begin(), copy.end());
+
+	int next_power_two = get_next_power_two(vec.size());
+
+	while (vec.size() < next_power_two)
+		vec.push_back(-1);
 
 	/*
 	   for (std::vector<int>::iterator it = copy.begin(); it != copy.end(); it++)
@@ -248,6 +272,13 @@ int	main(int argc, char **argv)
 
 	char lettre = 'A';
 	johnson(vec, vec.size(), lettre);
+
+	std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), -1);
+
+	if (it != vec.end())
+		vec.erase(it, vec.end());
+	
+	display(vec, vec.size(), 0, 0, 0);
 
 	if (!std::equal(copy.begin(), copy.end(), vec.begin()))
 	{
