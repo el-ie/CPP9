@@ -1,6 +1,7 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <deque>
 
 //delete ? :
 #include <cstdlib>
@@ -69,19 +70,23 @@ bool	is_even(int nb)
 	return false;
 }
 
-void	move_element(std::vector<int> & vec, std::vector<int>::iterator from, std::vector<int>::iterator to)
+template <typename container>
+void	move_element(container & sequence, int real_index, typename container::iterator to)
 {
-	if (from == vec.end() || to == vec.end() || from == to)
+	typename container::iterator from = sequence.begin() + real_index;
+
+	if (from == sequence.end() || to == sequence.end() || from == to)
 		return;
 
 	int tmp = *from;
 
-	vec.erase(from);
+	sequence.insert(to, tmp);
+	sequence.erase(sequence.begin() + real_index + 1);
 
-	vec.insert(to, tmp);
 }
 
-void	johnson(std::vector<int> & vec, int range)
+template <typename container>
+void	johnson(container & sequence, int range)
 {
 	int size = range;
 	int middle = (range / 2); 
@@ -91,13 +96,13 @@ void	johnson(std::vector<int> & vec, int range)
 
 	for (int i = 0; i < middle; i++)
 	{
-		if ((vec[i] > vec[i + middle]))
+		if ((sequence[i] > sequence[i + middle]))
 		{
-			std::swap(vec[i], vec[i + middle]);
+			std::swap(sequence[i], sequence[i + middle]);
 
-			while (size != vec.size())
+			while (size != sequence.size())
 			{
-				std::swap(vec[i + size], vec[i + middle + size]);
+				std::swap(sequence[i + size], sequence[i + middle + size]);
 				size += range;
 			}
 
@@ -105,13 +110,13 @@ void	johnson(std::vector<int> & vec, int range)
 	}
 
 	//----------------------------------
-	johnson(vec, range / 2);
+	johnson(sequence, range / 2);
 	//----------------------------------
 
-	if (range == vec.size())
+	if (range == sequence.size())
 		return;
 
-	std::vector<int>::iterator it;
+	typename container::iterator it;
 	int loop = 0;
 	int jacob_index = 0;
 	int real_index = range * 2 - 1;
@@ -135,15 +140,18 @@ void	johnson(std::vector<int> & vec, int range)
 			real_index = (range * 2 - 1) - jacob_index - (upper - jacob_index - 1) + loop;
 		}
 
-		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[real_index]);
-		offset_right = (*it < vec[real_index]) ? 1 : 0;
-		move_element(vec, vec.begin() + real_index, it + offset_right);
+		it = std::lower_bound(sequence.begin(), sequence.begin() + (range - 1) + loop, sequence[real_index]);
+		offset_right = (*it < sequence[real_index]) ? 1 : 0;
+		move_element(sequence, real_index, it + offset_right);
 		size = range * 2;
-		while (size != vec.size())
+		/*
+		while (size != sequence.size())
 		{
-			move_element(vec, vec.begin() + real_index + size, it + offset_right + size);
+			//move_element(sequence, sequence.begin() + real_index + size, it + offset_right + size);
+			move_element(sequence, real_index + size, it + offset_right + size);
 			size += range * 2;
 		}
+		*/
 		loop++;
 	}
 }
@@ -161,16 +169,18 @@ int	get_next_power_two(int nb)
 	return result;
 }
 
-void	display_container(std::vector<int> & vec)
+template <typename container>
+void	display_container(container & sequence)
 {
-	for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
+	for (typename container::iterator it = sequence.begin(); it != sequence.end(); ++it)
 		std::cout << *it << " ";
 	std::cout << std::endl;
 }
 
-bool is_sorted(const std::vector<int>& vec) {
-	for (std::size_t i = 1; i < vec.size(); ++i) {
-		if (vec[i-1] > vec[i]) {
+template <typename container>
+bool is_sorted(container & sequence) {
+	for (std::size_t i = 1; i < sequence.size(); ++i) {
+		if (sequence[i-1] > sequence[i]) {
 			return false;
 		}
 	}
@@ -193,7 +203,7 @@ bool	correct_characters(char *str)
 
 int	main(int argc, char **argv)
 {
-	std::vector<int> vec;
+	std::deque<int> vec;
 
 	if (argc < 2)
 		return (err_log("Error"));
@@ -213,8 +223,8 @@ int	main(int argc, char **argv)
 		i++;
 	}
 
-	if (is_sorted(vec))
-		return (err_log("Container already sorted."));
+	//if (is_sorted(vec))
+		//return (err_log("Container already sorted."));
 
 	std::cout << "Before:   ";
 	display_container(vec);
@@ -232,12 +242,10 @@ int	main(int argc, char **argv)
 	std::cout << "After:   ";
 	display_container(vec);
 
-	/*
 	   if (!is_sorted(vec))
 	   std::cout << "\n NOT SORTED \n";
 	   else
 	   std::cout << "\nsorted\n";
-	 */
 
 	return 0;
 }
