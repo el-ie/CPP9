@@ -1,6 +1,7 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <deque>
 
 //delete ? :
 #include <cstdlib>
@@ -63,7 +64,8 @@ int	get_next_jacobsthal_index(int last_index)
 
 }
 
-void	display(std::vector<int> vec, int range, int tiret, int display_range, int display_pendings)
+template <typename container>
+void	display(container vec, int range, int tiret, int display_range, int display_pendings)
 {
 	if (range == 1)
 	{
@@ -102,7 +104,8 @@ bool	is_even(int nb)
 	return false;
 }
 
-void	move_element(std::vector<int> & vec, std::vector<int>::iterator from, std::vector<int>::iterator to)
+template <typename container>
+void	move_element(container & vec, typename container::iterator from, typename container::iterator to)
 {
 	if (from == vec.end())//delete
 	{
@@ -120,7 +123,9 @@ void	move_element(std::vector<int> & vec, std::vector<int>::iterator from, std::
 	vec.insert(to, tmp);
 }
 
-void	johnson(std::vector<int> & vec, int range, char lettre)
+
+template <typename container>
+void	johnson(container & vec, int range, char lettre)
 {
 	int size = range;
 
@@ -173,7 +178,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 	std::cout << lettre << " ";
 	display(vec, range, 0, 1, 0);
 
-	std::vector<int>::iterator it;
+	typename container::iterator it;
 
 	int loop = 0;
 
@@ -192,6 +197,25 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 		//std::cout << "                  jacob(" << jacob_index << ") real(" << real_index << ")" << std::endl;
 
 		//lower_bound va trouver le nombre directement superieur dans la suite des nombres deja tries, ou le plus grand des nombres deja tries si vec[j] (le pounding en cours) est superieur a tous //middle - 1, -1 a tester
+
+
+		if (loop != 0)
+		{
+			jacob_index = get_next_jacobsthal_index(jacob_index);
+
+			while (jacob_index >= range)//keep ???????? pour revenir de l exces jacobsthal a la fin des nombres
+			{
+				shift++;//let ?
+				jacob_index = get_next_jacobsthal_index(jacob_index);
+			}
+
+			upper = get_upper_jacobsthal(jacob_index);
+			upper -= shift;
+
+			real_index = (range * 2 - 1) - jacob_index - (upper - jacob_index - 1) + loop;
+		}
+
+
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[real_index]);
 
 		offset_right = (*it < vec[real_index]) ? 1 : 0;
@@ -205,7 +229,7 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 			size += range * 2; //c est bien + car exponentialite des pairs
 		}
 
-		//display(vec, range, 0, 0, 0);
+		display(vec, range, 0, 0, 0);
 
 		loop++; //ICI???
 
@@ -213,18 +237,6 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 			return;
 
 		//std::cout << "J" << jacob_index << " ";
-		jacob_index = get_next_jacobsthal_index(jacob_index);
-		
-		while (jacob_index >= range)//keep ???????? pour revenir de l exces jacobsthal a la fin des nombres
-		{
-			shift++;//let ?
-			jacob_index = get_next_jacobsthal_index(jacob_index);
-		}
-
-		upper = get_upper_jacobsthal(jacob_index);
-		upper -= shift;
-
-		real_index = (range * 2 - 1) - jacob_index - (upper - jacob_index - 1) + loop;
 
 	}
 
@@ -235,20 +247,21 @@ void	johnson(std::vector<int> & vec, int range, char lettre)
 
 }
 
-bool isSorted(const std::vector<int>& vec) {
-    for (std::size_t i = 1; i < vec.size(); ++i) {
-        if (vec[i-1] > vec[i]) {
-            return false;
-        }
-    }
-    return true;
+template <typename container>
+bool isSorted(container & vec) {
+	for (std::size_t i = 1; i < vec.size(); ++i) {
+		if (vec[i-1] > vec[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 int	get_next_power_two(int nb)
 {
 	if (nb < 2)
 		return 0;
-	
+
 	int result = 2;
 
 	while (result < nb)
@@ -256,6 +269,88 @@ int	get_next_power_two(int nb)
 
 	return result;
 }
+
+
+int	main(int argc, char **argv)
+{
+	std::vector<int> vec;
+	std::deque<int> deq;
+
+	if (argc < 2)
+	{
+		std::cerr << "Error" << std::endl;
+		return 1;
+	}
+
+	int i = 1;
+
+	while (argv[i])
+	{
+		vec.push_back(std::atoi(argv[i]));
+		deq.push_back(std::atoi(argv[i]));
+		i++;
+	}
+	// si un seul element return
+	int saved_size = vec.size();
+
+	std::vector<int> copy = vec;
+	std::sort(copy.begin(), copy.end());
+
+
+	int next_power_two = get_next_power_two(vec.size());
+
+	while (vec.size() < next_power_two)
+		vec.push_back(INT_MAX);
+
+	
+	while (deq.size() < next_power_two)
+		deq.push_back(INT_MAX);
+
+	char lettre = 'A';
+
+	std::cout << "\n============== VECTOR ================\n\n";
+	johnson(vec, vec.size(), lettre);
+	std::cout << "\n============== DEQUE ================\n\n";
+	johnson(deq, deq.size(), lettre);
+	std::cout << "\n==============================\n\n";
+
+	std::vector<int>::iterator it = find(vec.begin(), vec.end(), INT_MAX);
+	if (it != vec.end())
+		vec.erase(it, vec.end());
+
+	std::deque<int>::iterator itq = find(deq.begin(), deq.end(), INT_MAX);
+	if (itq != deq.end())
+		deq.erase(itq, deq.end());
+
+	std::cout << "----- VECTOR -------\n";
+	display(vec, vec.size(), 0, 0, 0);
+	std::cout << "------ DEQUE ------\n";
+	display(deq, deq.size(), 0, 0, 0);
+
+/*
+	if (!std::equal(copy.begin(), copy.end(), vec.begin()))
+	{
+		std::cout << "ERROR the vectors are not equal" << std::endl;
+		return 1;
+	}
+	else
+		std::cout << "vectors are equal +++++" << std::endl;
+
+	std::cout << std::endl;
+
+	if (vec.size() != saved_size)
+		std::cout << "!! SIZE OF VECTOR CHANGED" << std::endl;
+	else if (!isSorted(vec))
+		std::cout << "NOT SORTED $$$$$$$$$$$$$$\n";
+	else
+		std::cout << "sorted\n";
+		*/
+
+
+	return 0;
+}
+
+/*
 
 int	main(int argc, char **argv)
 {
@@ -285,11 +380,6 @@ int	main(int argc, char **argv)
 	while (vec.size() < next_power_two)
 		vec.push_back(INT_MAX);
 
-	/*
-	   for (std::vector<int>::iterator it = copy.begin(); it != copy.end(); it++)
-	   std::cout << *it << " ";
-	   std::cout << std::endl;
-	 */
 
 	char lettre = 'A';
 	johnson(vec, vec.size(), lettre);
@@ -297,7 +387,7 @@ int	main(int argc, char **argv)
 	std::vector<int>::iterator it = find(vec.begin(), vec.end(), INT_MAX);
 	if (it != vec.end())
 		vec.erase(it, vec.end());
-	
+
 	display(vec, vec.size(), 0, 0, 0);
 
 	if (!std::equal(copy.begin(), copy.end(), vec.begin()))
@@ -320,3 +410,4 @@ int	main(int argc, char **argv)
 
 	return 0;
 }
+*/
