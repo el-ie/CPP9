@@ -105,7 +105,7 @@ bool	is_even(int nb)
 }
 
 template <typename container>
-void	move_element(container & vec, typename container::iterator from, typename container::iterator to)
+void	move_element(container & vec, typename container::iterator from, typename container::iterator to, int real_index)
 {
 	if (from == vec.end())//delete
 	{
@@ -118,9 +118,10 @@ void	move_element(container & vec, typename container::iterator from, typename c
 
 	int tmp = *from;
 
-	vec.erase(from);
-
+	//std::cout << "@" << *from << " ";
 	vec.insert(to, tmp);
+	vec.erase(vec.begin() + real_index + 1);
+	std::cout << "@" << *to << " ";
 }
 
 
@@ -149,11 +150,13 @@ void	johnson(container & vec, int range, char lettre)
 		{
 			std::swap(vec[i], vec[i + middle]);
 
+/*
 			while (size != vec.size())
 			{
 				std::swap(vec[i + size], vec[i + middle + size]);
 				size += range;//+ et non * voir graphique, expenentialite des pairs
 			}
+			*/
 
 		}
 	}
@@ -218,16 +221,23 @@ void	johnson(container & vec, int range, char lettre)
 
 		it = std::lower_bound(vec.begin(), vec.begin() + (range - 1) + loop, vec[real_index]);
 
+		//for (int voiture = 0; vec[voiture] != *it; i++);
+
 		offset_right = (*it < vec[real_index]) ? 1 : 0;
 
-		move_element(vec, vec.begin() + real_index, it + offset_right);
+
+		std::cout << "\nR" << real_index << " F" << offset_right << " *" << *it << std::endl;
+		move_element(vec, vec.begin() + real_index, it + offset_right, real_index);
 
 		size = range * 2;
+
+/*
 		while (size != vec.size())
 		{
 			move_element(vec, vec.begin() + real_index + size, it + offset_right + size);//if (range != vec.size())
 			size += range * 2; //c est bien + car exponentialite des pairs
 		}
+		*/
 
 		display(vec, range, 0, 0, 0);
 
@@ -327,7 +337,6 @@ int	main(int argc, char **argv)
 	std::cout << "------ DEQUE ------\n";
 	display(deq, deq.size(), 0, 0, 0);
 
-/*
 	if (!std::equal(copy.begin(), copy.end(), vec.begin()))
 	{
 		std::cout << "ERROR the vectors are not equal" << std::endl;
@@ -344,7 +353,6 @@ int	main(int argc, char **argv)
 		std::cout << "NOT SORTED $$$$$$$$$$$$$$\n";
 	else
 		std::cout << "sorted\n";
-		*/
 
 
 	return 0;
