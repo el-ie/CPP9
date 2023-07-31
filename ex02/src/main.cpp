@@ -86,6 +86,15 @@ void	move_element(container & sequence, int real_index, typename container::iter
 }
 
 template <typename container>
+int	get_index(container & sequence, typename container::iterator it)
+{
+	int i = 0;
+	while (sequence.begin() + i != it)
+		i++;
+	return i;
+}
+
+template <typename container>
 void	johnson(container & sequence, int range)
 {
 	int size = range;
@@ -124,6 +133,8 @@ void	johnson(container & sequence, int range)
 	int upper = 0;
 	int offset_right;
 
+	int target = 0;
+
 	while (loop < range)
 	{
 
@@ -139,19 +150,17 @@ void	johnson(container & sequence, int range)
 			upper -= shift;
 			real_index = (range * 2 - 1) - jacob_index - (upper - jacob_index - 1) + loop;
 		}
-
 		it = std::lower_bound(sequence.begin(), sequence.begin() + (range - 1) + loop, sequence[real_index]);
 		offset_right = (*it < sequence[real_index]) ? 1 : 0;
+		target = get_index(sequence, it);
 		move_element(sequence, real_index, it + offset_right);
 		size = range * 2;
-		/*
 		while (size != sequence.size())
 		{
 			//move_element(sequence, sequence.begin() + real_index + size, it + offset_right + size);
-			move_element(sequence, real_index + size, it + offset_right + size);
+			move_element(sequence, real_index + size, sequence.begin() + target + offset_right + size);
 			size += range * 2;
 		}
-		*/
 		loop++;
 	}
 }
@@ -203,7 +212,7 @@ bool	correct_characters(char *str)
 
 int	main(int argc, char **argv)
 {
-	std::deque<int> vec;
+	std::vector<int> vec;
 
 	if (argc < 2)
 		return (err_log("Error"));
