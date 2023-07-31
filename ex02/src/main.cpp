@@ -177,33 +177,44 @@ bool is_sorted(const std::vector<int>& vec) {
 	return true;
 }
 
+int	err_log(std::string str)
+{
+	std::cerr << str << std::endl;
+	return 1;
+}
+
+bool	correct_characters(char *str)
+{
+	for (int i = 0; str[i]; i++)
+		if (str[i] < '0' || str[i] > '9')
+			return false;
+	return true;
+}
+
 int	main(int argc, char **argv)
 {
 	std::vector<int> vec;
 
 	if (argc < 2)
-	{
-		std::cerr << "Error" << std::endl;
-		return 1;
-	}
+		return (err_log("Error"));
+	
 	if (argc == 2)
-	{
-		std::cerr << "Can't sort only one element." << std::endl;
-		return 1;
-	}
+		return(err_log("Can't sort only one element."));
 
 	int i = 1;
 
 	while (argv[i])
 	{
+		if (!correct_characters(argv[i]))
+			return (err_log("Error: Bad input.")); 
 		if (std::atoi(argv[i]) < 0)
-		{
-			std::cerr << "Error: negative number" << std::endl;
-			return 1;
-		}
+			return (err_log("Error: negative number.")); 
 		vec.push_back(std::atoi(argv[i]));
 		i++;
 	}
+
+	if (is_sorted(vec))
+		return (err_log("Container already sorted."));
 
 	std::cout << "Before:   ";
 	display_container(vec);
@@ -222,11 +233,11 @@ int	main(int argc, char **argv)
 	display_container(vec);
 
 	/*
-	if (!is_sorted(vec))
-		std::cout << "\n NOT SORTED \n";
-	else
-		std::cout << "\nsorted\n";
-	*/
+	   if (!is_sorted(vec))
+	   std::cout << "\n NOT SORTED \n";
+	   else
+	   std::cout << "\nsorted\n";
+	 */
 
 	return 0;
 }
