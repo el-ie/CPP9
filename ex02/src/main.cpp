@@ -2,11 +2,21 @@
 #include <iostream>
 #include <vector>
 #include <deque>
+#include <sys/time.h>
 
 //delete ? :
 #include <cstdlib>
 #include <algorithm>
 #include <climits>
+
+unsigned long long int	get_time(void)
+{
+	struct timeval	now;
+
+	gettimeofday(&now, NULL);
+	return ((long long int)(long long int)now.tv_sec * 1000000
+		+ (long long int)now.tv_usec);
+}
 
 int	get_upper_jacobsthal(int nb)
 {
@@ -210,30 +220,51 @@ bool	correct_characters(char *str)
 	return true;
 }
 
+template <typename container>
+void	timed_johnson(container & sequence, std::string container_type, char **argv)
+{
+	unsigned long long int start_time = get_time();
+
+	for (int i = 1; argv[i]; i++)
+		sequence.push_back(std::atoi(argv[i]));
+
+	int saved_size = sequence.size();
+	int next_power_two = get_next_power_two(sequence.size());
+
+	while (sequence.size() < next_power_two)
+		sequence.push_back(INT_MAX);
+
+	johnson(sequence, sequence.size());
+
+	sequence.erase(sequence.begin() + saved_size, sequence.end());
+
+	unsigned long long int processing_time = get_time() - start_time;
+
+	std::cout << "Time to process a range of " << sequence.size() << " elements with " << container_type << " : " << processing_time << " us" << std::endl;
+}
+
+
 int	main(int argc, char **argv)
 {
-	std::vector<int> vec;
-
 	if (argc < 2)
 		return (err_log("Error"));
 	
 	if (argc == 2)
 		return(err_log("Can't sort only one element."));
 
-	int i = 1;
+	std::vector<int> vec;
 
-	while (argv[i])
+	for (int i = 1; argv[i]; i++)
 	{
 		if (!correct_characters(argv[i]))
 			return (err_log("Error: Bad input.")); 
 		if (std::atoi(argv[i]) < 0)
 			return (err_log("Error: negative number.")); 
 		vec.push_back(std::atoi(argv[i]));
-		i++;
 	}
 
-	//if (is_sorted(vec))
-		//return (err_log("Container already sorted."));
+	if (is_sorted(vec))
+		return (err_log("Container already sorted."));
 
 	std::cout << "Before:   ";
 	display_container(vec);
@@ -251,10 +282,23 @@ int	main(int argc, char **argv)
 	std::cout << "After:   ";
 	display_container(vec);
 
-	   if (!is_sorted(vec))
-	   std::cout << "\n NOT SORTED \n";
-	   else
-	   std::cout << "\nsorted\n";
+	/*
+	if (!is_sorted(vec))
+		std::cout << "\n Not sorted. \n";
+	else
+		std::cout << "\n sorted \n";
+
+	*/
+
+	//Timer part :
+
+	// Time for std::vector processing
+	std::vector<int> vec2;
+	timed_johnson(vec2, "std::vector", argv);
+
+	// Time for std::deque processing
+	std::deque<int> deq;
+	timed_johnson(deq, "std::deque", argv);
 
 	return 0;
 }
