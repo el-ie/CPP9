@@ -116,7 +116,7 @@ void	johnson(container & sequence, int range)
 		{
 			std::swap(sequence[i], sequence[i + middle]);
 
-			while (size != sequence.size())
+			while (size != (int)sequence.size())
 			{
 				std::swap(sequence[i + size], sequence[i + middle + size]);
 				size += range;
@@ -129,7 +129,7 @@ void	johnson(container & sequence, int range)
 	johnson(sequence, range / 2);
 	//----------------------------------
 
-	if (range == sequence.size())
+	if (range == (int)sequence.size())
 		return;
 
 	typename container::iterator it;
@@ -162,7 +162,7 @@ void	johnson(container & sequence, int range)
 		target = get_index(sequence, it);
 		move_element(sequence, real_index, it + offset_right);
 		size = range * 2;
-		while (size != sequence.size())
+		while (size != (int)sequence.size())
 		{
 			//move_element(sequence, sequence.begin() + real_index + size, it + offset_right + size);
 			move_element(sequence, real_index + size, sequence.begin() + target + offset_right + size);
@@ -228,7 +228,7 @@ void	timed_johnson(container & sequence, std::string container_type, char **argv
 	int saved_size = sequence.size();
 	int next_power_two = get_next_power_two(sequence.size());
 
-	while (sequence.size() < next_power_two)
+	while ((int)sequence.size() < next_power_two)
 		sequence.push_back(INT_MAX);
 
 	johnson(sequence, sequence.size());
@@ -240,10 +240,9 @@ void	timed_johnson(container & sequence, std::string container_type, char **argv
 	std::cout << "Time to process a range of " << sequence.size() << " elements with " << container_type << " : " << processing_time << " us" << std::endl;
 }
 
-
 int	main(int argc, char **argv)
 {
-	if (argc < 2)
+	if (argc < 2 || argc > 50000)
 		return (err_log("Error"));
 	
 	if (argc == 2)
@@ -269,7 +268,7 @@ int	main(int argc, char **argv)
 	int saved_size = vec.size();
 	int next_power_two = get_next_power_two(vec.size());
 
-	while (vec.size() < next_power_two)
+	while ((int)vec.size() < next_power_two)
 		vec.push_back(INT_MAX);
 
 	johnson(vec, vec.size());
