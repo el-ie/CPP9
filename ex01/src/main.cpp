@@ -19,6 +19,9 @@ int	error_message(void)
 
 bool	check_input(std::string input)
 {
+	if (input.empty())
+		return false;
+
 	if (is_operator(input[0]) || !is_operator(input[input.size() - 1]))
 		return false;
 		
@@ -40,6 +43,9 @@ bool	check_input(std::string input)
 		else
 			error_message();
 	}
+	
+	if (nb_count < 2 || operators_count < 1)
+		return false;
 
 	if (nb_count != (operators_count + 1))
 		return false;
@@ -76,6 +82,7 @@ int	main(int argc, char **argv)
 		{
 			numbers.push(static_cast<double>(argv[1][i] - 48));
 		}
+
 		else if (is_operator(line[i]))
 		{
 			if (numbers.size() < 2)
@@ -86,11 +93,11 @@ int	main(int argc, char **argv)
 
 			if (line[i] == '+')
 				nb1 += numbers.top();
-			if (line[i] == '-')
+			else if (line[i] == '-')
 				nb1 = numbers.top() - nb1;
-			if (line[i] == '*')
+			else if (line[i] == '*')
 				nb1 *= numbers.top();
-			if (line[i] == '/')
+			else if (line[i] == '/')
 				nb1 = numbers.top() / nb1;
 
 			numbers.pop();
