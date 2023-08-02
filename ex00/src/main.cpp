@@ -2,7 +2,6 @@
 #include <string>
 #include <fstream> //read du fichier
 #include <map>
-#include <sstream> //for isstringstream, string -> int
 #include <cstdlib> //pour abort
 
 #include <cfloat>
@@ -16,7 +15,6 @@
 //std::map<std::string, double>	file_to_map(std::string file, int debug, std::string sep_str, std::ifstream inputFile)
 std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, std::string sep_str)
 {
-	//std::ifstream	inputFile(file.c_str()); //check openning
 
 	std::map<std::string, double>	data;
 
@@ -27,7 +25,6 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 	size_t		pos		= 0;
 	int		loop		= 0;//remove?
 
-	//std::istringstream	iss;
 	char *endptr;
 
 	(void)debug;
@@ -44,17 +41,6 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 		date = line_readed.substr(0, pos);        //if (line_readed[pos + 1] == '\0') ??
 
 		value_str = line_readed.substr(pos + sep_str.size());
-
-		//STRINGSTREAM
-		/*
-		iss.str(value_str);
-		if (loop != 0 && !(iss >> value))
-		{std::cerr << "abort: loop {" << loop << "}" << std::endl; abort();}//change
-
-		iss.clear();// est ce suffisant
-			    //iss.seekg(0); //utilite?
-		//std::cout << "{" << value << "}" << std::endl;
-		*/
 
 		//STRTOD
 		value = std::strtod(value_str.c_str(), &endptr);
