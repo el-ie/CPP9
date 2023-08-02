@@ -13,9 +13,10 @@
 #define NODEBUG 41
 #define DEBUG 40
 
-std::map<std::string, double>	file_to_map(std::string file, int debug, std::string sep_str)
+//std::map<std::string, double>	file_to_map(std::string file, int debug, std::string sep_str, std::ifstream inputFile)
+std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, std::string sep_str)
 {
-	std::ifstream	inputFile(file.c_str()); //check openning
+	//std::ifstream	inputFile(file.c_str()); //check openning
 
 	std::map<std::string, double>	data;
 
@@ -233,23 +234,28 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 
 int	main(int argc, char **argv)
 {
-	/*
-	   if (argc != 2)
-	   {
-	   std::cerr << "Error: could not open file." << std::endl; //????????
-	   return 1;
-	   }
-	 */
+	if (argc != 2)
+	{
+		std::cerr << "Error: could not open file." << std::endl;
+		return 1;
+	}
+	
+	std::ifstream	data_file("data.csv");
+	std::ifstream	bitcoin_wallet_file(argv[1]);
 
-	(void)argc;
+	if (!data_file.is_open() || !bitcoin_wallet_file.is_open())
+	{
+		std::cerr << "Error: could not open file." << std::endl;
+		return 1;
+	}
 
 	//protect read
 
 	std::map<std::string, double>	dollar_rate, bitcoins;
 
-	dollar_rate = file_to_map("data.csv", NODEBUG, ",");
+	dollar_rate = file_to_map(data_file, NODEBUG, ",");
 
-	bitcoins = file_to_map(argv[1], DEBUG, " | ");
+	bitcoins = file_to_map(bitcoin_wallet_file, DEBUG, " | ");
 
 	display_map(dollar_rate, 100);
 
@@ -303,4 +309,3 @@ int	main(int argc, char **argv)
    std::cout << "FAIL" << std::endl;
    }
  */
-

@@ -1,13 +1,12 @@
-#-mkup-auto-sources-###############################################131734050723#
+#-mkup-auto-sources-###############################################492231020823#
 SRC_DIR		=	src
 
 EXTENSION	=	".cpp"
 SRC_LIST	=	$(addsuffix $(EXTENSION), \
-				BitcoinExchange \
 				main \
 				)
 SRC			=	$(addprefix $(SRC_DIR)/, $(SRC_LIST))
-#-mkup-auto-sources-###############################################131734050723#
+#-mkup-auto-sources-###############################################492231020823#
 
 INC_DIR		= 	.
 OBJ_DIR		=	obj
