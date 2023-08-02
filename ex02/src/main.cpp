@@ -3,11 +3,8 @@
 #include <vector>
 #include <deque>
 #include <sys/time.h>
-
-//delete ? :
-#include <cstdlib>
-#include <algorithm>
 #include <climits>
+#include <algorithm>
 
 unsigned long long int	get_time(void)
 {
@@ -282,8 +279,8 @@ int	main(int argc, char **argv)
 	std::cout << "After:   ";
 	display_container(vec);
 
-	
-	//delete//std::cout << (is_sorted(vec) ? "sorted" : "Not sorted.") << std::endl;
+	//delete
+	std::cout << (is_sorted(vec) ? "sorted" : "Not sorted.") << std::endl;
 
 			//// Timer part	////
 
