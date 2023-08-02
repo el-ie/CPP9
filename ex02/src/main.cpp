@@ -282,15 +282,10 @@ int	main(int argc, char **argv)
 	std::cout << "After:   ";
 	display_container(vec);
 
-	/*
-	if (!is_sorted(vec))
-		std::cout << "\n Not sorted. \n";
-	else
-		std::cout << "\n sorted \n";
+	
+	//delete//std::cout << (is_sorted(vec) ? "sorted" : "Not sorted.") << std::endl;
 
-	*/
-
-	//Timer part :
+			//// Timer part	////
 
 	// Time for std::vector processing
 	std::vector<int> vec2;
