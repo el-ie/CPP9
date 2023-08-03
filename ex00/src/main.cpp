@@ -242,19 +242,10 @@ bool	correct_date(std::string date)
 
 void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 {
-
-	if (DEBUG)
-		std::cout << std::endl << "			=>  [" << Bdate << "]  <=" << std::endl;
-
 	if (!correct_date(Bdate) || Bvalue < 0 || Bvalue > 1000)
 	{
 		if (!correct_date(Bdate))
-		{
-			std::cerr << "Error: bad input => " << Bdate << std::endl;
-
-			if (DEBUG) { std::cerr << Bdate << "] INCORRECT DATE" << std::endl;
-				std::cerr << "\n----------------------------" << std::endl; }
-		}
+			std::cerr << "Error: Incorrect Date => " << Bdate << std::endl;
 		if (Bvalue < 0)
 			std::cerr << "Error: not a positive number. (" << Bvalue << ")" << std::endl;
 		if (Bvalue > 1000)
@@ -265,9 +256,6 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 	double result = Bvalue * Drate;
 
 	std::cout << Bdate << " => " << Bvalue << " = " << result << std::endl;
-	//std::cout << "Drate = " << Drate << std::endl;
-
-
 }
 
 int	error_log(std::string str)
@@ -279,11 +267,8 @@ int	error_log(std::string str)
 int	main(int argc, char **argv)
 {
 	if (argc != 2)
-	{
-		std::cerr << "Error: could not open file." << std::endl;
-		return 1;
-	}
-
+		return (error_log("Error: could not open file.");
+		
 	std::ifstream	data_file("data.csv");
 
 	if (!data_file.is_open() || data_file.fail() || data_file.bad())
@@ -320,15 +305,15 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 
-	display_map(bitcoins, 1);//delete
+	//display_map(bitcoins, 1);//delete
 
-	display_map(dollar_rate, 100);
+	//display_map(dollar_rate, 100);
 
-	std::cout << "\n ----------------------- \n\n";
+	//std::cout << "\n ----------------------- \n\n";
 
-	display_map(bitcoins, 1);
+	//display_map(bitcoins, 1);
 
-	std::cout << "\n ##################################################### \n\n";
+	//std::cout << "\n ##################################################### \n\n";
 
 	std::map<std::string, double>::iterator itD;
 	std::map<std::string, double>::iterator itD_last;
@@ -344,12 +329,12 @@ int	main(int argc, char **argv)
 			{
 				if (itD_last != dollar_rate.end()) //si ce n'est pas le premier tour et donc itD_last est bon
 				{
-					std::cout << "Dollar rate date = " << itD_last->first << std::endl;
+					//std::cout << "Dollar rate date = " << itD_last->first << std::endl;
 					check_and_calcul(itB->first, itB->second, itD_last->second); //itD_last
 				}
 				else //sinon c est le premier tour et on doit prendre itD et non last
 				{
-					std::cout << "Dollar rate date = " << itD_last->first << std::endl;
+					//std::cout << "Dollar rate date = " << itD_last->first << std::endl;
 					check_and_calcul(itB->first, itB->second, itD->second);
 				}
 
@@ -358,7 +343,6 @@ int	main(int argc, char **argv)
 			itD_last = itD;
 			itD++;
 		}
-		//if (itD == dollar_rate.end() && !(itB->first < itD_last->first))
 		if (itD == dollar_rate.end())
 			check_and_calcul(itB->first, itB->second, itD_last->second);
 	}
@@ -367,16 +351,3 @@ int	main(int argc, char **argv)
 
 	return 0;
 }
-
-/*
-   int	main(int argc, char **argv)
-   {
-   (void)argc;
-
-   int result = correct_date(argv[1]);
-   if (result == 1)
-   std::cout << "Success" << std::endl;
-   if (result == 0)
-   std::cout << "FAIL" << std::endl;
-   }
- */
