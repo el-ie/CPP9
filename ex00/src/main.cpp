@@ -55,8 +55,8 @@ bool	correct_format_read(std::string str, std::string sep_str)
 	if (str.empty())
 		return false;
 
-	//if (str.find(sep_str) == std::string::npos)
-		//return false;
+	if (str.find(sep_str) == std::string::npos)
+		return false;
 
 	if (!read_correct_date(str))
 		return false;
@@ -87,11 +87,8 @@ bool	correct_format_read(std::string str, std::string sep_str)
 	return true;
 }
 
-std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, std::string sep_str)
+bool	file_to_map(std::ifstream & inputFile, std::map<std::string, double> & data, int debug, std::string sep_str)
 {
-
-	std::map<std::string, double>	data;
-
 	std::string	line_readed	= "";
 	std::string	date		= "";
 	std::string	value_str	= "";
@@ -108,28 +105,26 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 	while (getline(inputFile, line_readed))
 	{
 		//security check line
+
+		if (inputFile.fail())
+		{
+			std::cerr << "Error" << std::endl;
+			return false;
+		}
+
 		if (line_readed.empty())
 			continue;
 
 		if (!correct_format_read(line_readed, sep_str))
 		{
-			//std::cerr << "CORRECT FORMAT READ, ";
+			std::cerr << "CORRECT FORMAT READ, ";
 			std::cerr << "Error: bad input => " << line_readed << std::endl;
 			continue;
 		}
 
-		pos = line_readed.find(sep_str.c_str(), 0);       //if (pos == std::string::npos) ??
-
-		//std::cout << "pos = " << pos << std::endl;
-
-
-		date = line_readed.substr(0, pos);        //if (line_readed[pos + 1] == '\0') ??
-
-		//std::cout << "date = [" << date << "]" << std::endl;
-
+		pos = line_readed.find(sep_str.c_str(), 0);
+		date = line_readed.substr(0, pos);
 		value_str = line_readed.substr(pos + sep_str.size());
-
-		//std::cout << "value_str = [" << value_str << "]" << std::endl;
 
 		//STRTOD
 		value = std::strtod(value_str.c_str(), &endptr);
@@ -138,7 +133,7 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 		while (data.find(date) != data.end()) //! dates identiques
 			date += '.';
 
-		if (data.insert(std::pair<std::string, double>(date, value)).second == false)
+		if (data.insert(std::pair<std::string, double>(date, value)).second == false) //delete condition
 		{
 			std::cout << "\n" << "Error insert [" << date << "] [" << value_str << "]" << std::endl;
 			abort();
@@ -147,7 +142,7 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 
 	inputFile.close();
 
-	return	data;
+	return	true;
 	// resoudre le probleme de la perte de la deuxieme decimale dans la conversion
 	// a partir de 2020-07-25,9551.28 (wtf)
 }
@@ -316,12 +311,12 @@ int	main(int argc, char **argv)
 
 	std::ifstream	data_file("data.csv");
 
-	if (!data_file.is_open())
+	if (!data_file.is_open() || data_file.fail() || data_file.bad())
 		return (error_log("Error: could not open file."));
 
 	std::ifstream	bitcoin_wallet_file(argv[1]);
 
-	if (!bitcoin_wallet_file.is_open())
+	if (!bitcoin_wallet_file.is_open() || bitcoin_wallet_file.fail() || bitcoin_wallet_file.bad())
 	{
 		data_file.close();
 		return (error_log("Error: could not open file."));
@@ -329,11 +324,26 @@ int	main(int argc, char **argv)
 
 	std::map<std::string, double>	dollar_rate, bitcoins;
 
-	//dollar_rate = file_to_map(data_file, NODEBUG, ",");
+	if (file_to_map(data_file, dollar_rate, DEBUG, ",") == false)
+	{
+		data_file.close();
+		bitcoin_wallet_file.close();
+		return 1;
+	}
 
-	bitcoins = file_to_map(bitcoin_wallet_file, DEBUG, " | ");
+	if (file_to_map(bitcoin_wallet_file, bitcoins, DEBUG, " | ") == false)
+	{
+		bitcoin_wallet_file.close();
+		return 1;
+	}
+
+	if (dollar_rate.empty() || bitcoins.empty())
+	{
+		std::cerr << "Error: Incorrect Input" << std::endl;
+		return 1;
+	}
+
 	display_map(bitcoins, 1);//delete
-	return 1;
 
 	display_map(dollar_rate, 100);
 
