@@ -6,6 +6,7 @@
 
 #include <cfloat>
 #include <cmath>
+#include <limits>
 
 #include "../inc/BitcoinExchange.hpp"
 
@@ -36,13 +37,24 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 
 		pos = line_readed.find(sep_str.c_str(), 0);       //if (pos == std::string::npos) ??
 
-		date = line_readed.substr(0, pos);        //if (line_readed[pos + 1] == '\0') ??
+		std::cout << "pos = " << pos << std::endl;
 
-		value_str = line_readed.substr(pos + sep_str.size());
+		if (pos == std::string::npos || pos != 10)
+		{
+			date = line_readed;
+			value = std::numeric_limits<double>::infinity();
+		}
+		else
+		{
 
-		//STRTOD
-		value = std::strtod(value_str.c_str(), &endptr);
-		//if endptr == str...
+			date = line_readed.substr(0, pos);        //if (line_readed[pos + 1] == '\0') ??
+
+			value_str = line_readed.substr(pos + sep_str.size());
+
+			//STRTOD
+			value = std::strtod(value_str.c_str(), &endptr);
+			//if endptr == str...
+		}
 
 		while (data.find(date) != data.end()) //! dates identiques
 			date += '.';
@@ -101,7 +113,7 @@ bool	correct_date(std::string date)
 
 	if (date.find('.') != std::string::npos)
 		similar_dates_remove_points(date);
-	
+
 	//std::cout << "DATE  " << date << std::endl;
 
 	if (date.size() != 10)
@@ -231,7 +243,7 @@ int	main(int argc, char **argv)
 		std::cerr << "Error: could not open file." << std::endl;
 		return 1;
 	}
-	
+
 	std::ifstream	data_file("data.csv");
 
 	if (!data_file.is_open())
@@ -247,9 +259,11 @@ int	main(int argc, char **argv)
 
 	std::map<std::string, double>	dollar_rate, bitcoins;
 
-	dollar_rate = file_to_map(data_file, NODEBUG, ",");
+	//dollar_rate = file_to_map(data_file, NODEBUG, ",");
 
 	bitcoins = file_to_map(bitcoin_wallet_file, DEBUG, " | ");
+	display_map(bitcoins, 1);//delete
+	return 1;
 
 	display_map(dollar_rate, 100);
 
