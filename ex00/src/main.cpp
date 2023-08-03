@@ -13,6 +13,80 @@
 #define NODEBUG 41
 #define DEBUG 40
 
+bool	isOnlyDigits(std::string str)
+{
+	for (int i = 0; str[i]; ++i)
+	{
+		if (!std::isdigit(static_cast<unsigned char>(str[i])))
+			return false;
+	}
+	return true;
+}
+
+bool	correct_number_format(std::string str)
+{
+	for (int i = 0; str[i]; ++i)
+	{
+		if (!std::isdigit(static_cast<unsigned char>(str[i])))
+			if (str[i] != '.' && str[i] != '+' && str[i] != '-')
+				return false;
+	}
+	return true;
+}
+
+bool	read_correct_date(std::string line)
+{
+	if (line.empty())
+		return false;
+
+	if (line.size() < 10)
+		return false;
+
+	if (!isOnlyDigits(line.substr(0,4) + line.substr(5,2) + line.substr(8,2)))
+		return false;
+
+	if (line[4] != '-' || line[7] != '-')
+		return false;
+	return true;
+}
+
+bool	correct_format_read(std::string str, std::string sep_str)
+{
+	if (str.empty())
+		return false;
+
+	//if (str.find(sep_str) == std::string::npos)
+		//return false;
+
+	if (!read_correct_date(str))
+		return false;
+	
+	if (sep_str == " | ")
+	{
+
+		if (str.size() < 14)
+			return false;
+		if (str[11] != '|')
+			return false;
+		if (str[12] != ' ')
+			return false;
+		if (!correct_number_format(str.substr(13)))
+			return false;
+	}
+	else if (sep_str == ",")
+	{
+
+		if (str.size() < 12)
+			return false;
+		if (str[10] != ',')
+			return false;
+		if (!correct_number_format(str.substr(11)))
+			return false;
+	}
+	
+	return true;
+}
+
 std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, std::string sep_str)
 {
 
@@ -34,27 +108,32 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 	while (getline(inputFile, line_readed))
 	{
 		//security check line
+		if (line_readed.empty())
+			continue;
+
+		if (!correct_format_read(line_readed, sep_str))
+		{
+			//std::cerr << "CORRECT FORMAT READ, ";
+			std::cerr << "Error: bad input => " << line_readed << std::endl;
+			continue;
+		}
 
 		pos = line_readed.find(sep_str.c_str(), 0);       //if (pos == std::string::npos) ??
 
-		std::cout << "pos = " << pos << std::endl;
+		//std::cout << "pos = " << pos << std::endl;
 
-		if (pos == std::string::npos || pos != 10)
-		{
-			date = line_readed;
-			value = std::numeric_limits<double>::infinity();
-		}
-		else
-		{
 
-			date = line_readed.substr(0, pos);        //if (line_readed[pos + 1] == '\0') ??
+		date = line_readed.substr(0, pos);        //if (line_readed[pos + 1] == '\0') ??
 
-			value_str = line_readed.substr(pos + sep_str.size());
+		//std::cout << "date = [" << date << "]" << std::endl;
 
-			//STRTOD
-			value = std::strtod(value_str.c_str(), &endptr);
-			//if endptr == str...
-		}
+		value_str = line_readed.substr(pos + sep_str.size());
+
+		//std::cout << "value_str = [" << value_str << "]" << std::endl;
+
+		//STRTOD
+		value = std::strtod(value_str.c_str(), &endptr);
+		//if endptr == str...
 
 		while (data.find(date) != data.end()) //! dates identiques
 			date += '.';
@@ -85,15 +164,6 @@ void	display_map(std::map<std::string, double> data, int modulo)
 	}
 }
 
-bool	isOnlyDigits(std::string str)
-{
-	for (int i = 0; str[i]; ++i)
-	{
-		if (!std::isdigit(static_cast<unsigned char>(str[i])))
-			return false;
-	}
-	return true;
-}
 
 #define DEBUGG 0
 
