@@ -10,9 +10,6 @@
 
 #include "../inc/BitcoinExchange.hpp"
 
-#define NODEBUG 41
-#define DEBUG 40
-
 bool	isOnlyDigits(std::string str)
 {
 	for (int i = 0; str[i]; ++i)
@@ -87,7 +84,7 @@ bool	correct_format_read(std::string str, std::string sep_str)
 	return true;
 }
 
-bool	file_to_map(std::ifstream & inputFile, std::map<std::string, double> & data, int debug, std::string sep_str)
+bool	file_to_map(std::ifstream & inputFile, std::map<std::string, double> & data, std::string sep_str)
 {
 	std::string	line_readed	= "";
 	std::string	date		= "";
@@ -97,27 +94,18 @@ bool	file_to_map(std::ifstream & inputFile, std::map<std::string, double> & data
 
 	char *endptr;
 
-	(void)debug;
-
-	//pass title
 	getline(inputFile, line_readed); 
 
 	while (getline(inputFile, line_readed))
 	{
-		//security check line
-
 		if (inputFile.fail())
-		{
-			std::cerr << "Error" << std::endl;
 			return false;
-		}
 
 		if (line_readed.empty())
 			continue;
 
 		if (!correct_format_read(line_readed, sep_str))
 		{
-			std::cerr << "CORRECT FORMAT READ, ";
 			std::cerr << "Error: bad input => " << line_readed << std::endl;
 			continue;
 		}
@@ -125,19 +113,12 @@ bool	file_to_map(std::ifstream & inputFile, std::map<std::string, double> & data
 		pos = line_readed.find(sep_str.c_str(), 0);
 		date = line_readed.substr(0, pos);
 		value_str = line_readed.substr(pos + sep_str.size());
-
-		//STRTOD
 		value = std::strtod(value_str.c_str(), &endptr);
-		//if endptr == str...
 
-		while (data.find(date) != data.end()) //! dates identiques
+		while (data.find(date) != data.end())
 			date += '.';
 
-		if (data.insert(std::pair<std::string, double>(date, value)).second == false) //delete condition
-		{
-			std::cout << "\n" << "Error insert [" << date << "] [" << value_str << "]" << std::endl;
-			abort();
-		}
+		data.insert(std::pair<std::string, double>(date, value));
 	}
 
 	inputFile.close();
@@ -324,15 +305,17 @@ int	main(int argc, char **argv)
 
 	std::map<std::string, double>	dollar_rate, bitcoins;
 
-	if (file_to_map(data_file, dollar_rate, DEBUG, ",") == false)
+	if (file_to_map(data_file, dollar_rate, ",") == false)
 	{
+		std::cerr << "Error reading." << std::endl;
 		data_file.close();
 		bitcoin_wallet_file.close();
 		return 1;
 	}
 
-	if (file_to_map(bitcoin_wallet_file, bitcoins, DEBUG, " | ") == false)
+	if (file_to_map(bitcoin_wallet_file, bitcoins, " | ") == false)
 	{
+		std::cerr << "Error reading." << std::endl;
 		bitcoin_wallet_file.close();
 		return 1;
 	}
