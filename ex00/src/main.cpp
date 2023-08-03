@@ -1,14 +1,11 @@
 #include <iostream>
 #include <string>
-#include <fstream> //read du fichier
+#include <fstream>
 #include <map>
-#include <cstdlib> //pour abort
-
+#include <cstdlib>
 #include <cfloat>
 #include <cmath>
 #include <limits>
-
-#include "../inc/BitcoinExchange.hpp"
 
 bool	isOnlyDigits(std::string str)
 {
@@ -22,11 +19,27 @@ bool	isOnlyDigits(std::string str)
 
 bool	correct_number_format(std::string str)
 {
-	for (int i = 0; str[i]; ++i)
+	int i = 0;
+
+	while (str[i] == ' ')
+		i++;
+
+	if (str[i] == '+' || str[i] == '-')
 	{
+		i++;
 		if (!std::isdigit(static_cast<unsigned char>(str[i])))
-			if (str[i] != '.' && str[i] != '+' && str[i] != '-')
+			return false;
+		i++;
+	}
+
+	while (str[i])
+	{
+		if (!std::isdigit(static_cast<unsigned char>(str[i])) && str[i] != '.')
 				return false;
+		if (str[i] == '.')
+			if (!std::isdigit(static_cast<unsigned char>(str[i + 1])))
+				return false;
+		i++;
 	}
 	return true;
 }
@@ -57,7 +70,7 @@ bool	correct_format_read(std::string str, std::string sep_str)
 
 	if (!read_correct_date(str))
 		return false;
-	
+
 	if (sep_str == " | ")
 	{
 
@@ -80,7 +93,7 @@ bool	correct_format_read(std::string str, std::string sep_str)
 		if (!correct_number_format(str.substr(11)))
 			return false;
 	}
-	
+
 	return true;
 }
 
@@ -126,27 +139,12 @@ bool	file_to_map(std::ifstream & inputFile, std::map<std::string, double> & data
 	return	true;
 }
 
-void	display_map(std::map<std::string, double> data, int modulo) 
-{
-	int i = 0;
-
-	for (std::map<std::string, double>::iterator it = data.begin(); it != data.end(); it++)
-	{
-		i++;
-		if (i % modulo == 0)
-			std::cout << "[" << it->first << "] - [" << it->second << "]" << std::endl;
-	}
-}
-
 void	similar_dates_remove_points(std::string & date)
 {
 	while (date.at(date.length() - 1) == '.')
 		date.erase(date.length() - 1);
 }
 
-#define DEBUG 0
-
-//date doit etre une copie pour enlever les .
 bool	correct_date(std::string date)
 {
 	if (date.empty())
@@ -156,22 +154,13 @@ bool	correct_date(std::string date)
 		similar_dates_remove_points(date);
 
 	if (date.size() != 10)
-	{
-		if (DEBUG) std::cout << "if (date.size() != 10)" << std::endl;
 		return false;
-	}
 
 	if (!isOnlyDigits(date.substr(0,4) + date.substr(5,2) + date.substr(8,2)))
-	{
-		if (DEBUG) std::cout << "!Isdigitonly" << std::endl;
 		return false;
-	}
 
 	if (date[4] != '-' || date[7] != '-')
-	{	
-		if (DEBUG) std::cout << "Guillement" << std::endl;
 		return false;
-	}
 
 	std::string year_str = date.substr(0,4);
 	std::string month_str = date.substr(5,2);
@@ -185,43 +174,23 @@ bool	correct_date(std::string date)
 		return false;
 
 	if (year < 2009 || year > 2023)
-	{
-		if (DEBUG) std::cout << "year < 2009 || year > 2023 " << std::endl;
 		return false;
-	}
 
 	if (year == 2023 && month > 7)
-	{
-		if (DEBUG) std::cout << "year == 2023 || month > 6 " << std::endl;
 		return false;
-	}
 
 	if (month < 1 || month > 12)
-	{
-		if (DEBUG) std::cout << "month < 1 || month > 12 " << std::endl;
 		return false;
-	}
 
 	if (day < 1 || day > 31)
-	{
-		if (DEBUG) std::cout << "day < 1 || day > 31 " << std::endl;
 		return false;
-	}
-
 
 	if (month == 4 || month == 6 || month == 9 || month == 11)
-	{
 		if (day > 30)
-		{
-			if (DEBUG) std::cout <<"month == 4 || month == 6 || month == 9 || month == 11 ET day > 30\n";
 			return false;
-		}
-	}
-
 
 	if (month == 2)
 	{
-		if (DEBUG) std::cout << "month ==2\n" << std::endl;
 		if (day > 29)
 			return false;
 
@@ -235,7 +204,6 @@ bool	correct_date(std::string date)
 			if (day > 28)
 				return false;
 	}
-
 
 	return true;
 }
@@ -275,7 +243,7 @@ int	main(int argc, char **argv)
 {
 	if (argc != 2)
 		return (error_log("Error: could not open file."));
-		
+
 	std::ifstream	data_file("data.csv");
 
 	if (!data_file.is_open() || data_file.fail() || data_file.bad())
@@ -312,16 +280,6 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 
-	//display_map(bitcoins, 1);//delete
-
-	//display_map(dollar_rate, 100);
-
-	//std::cout << "\n ----------------------- \n\n";
-
-	//display_map(bitcoins, 1);
-
-	//std::cout << "\n ##################################################### \n\n";
-
 	std::map<std::string, double>::iterator itD;
 	std::map<std::string, double>::iterator itD_last;
 
@@ -334,18 +292,12 @@ int	main(int argc, char **argv)
 		{
 			if (itB->first < itD->first)
 			{
-				if (itD_last != dollar_rate.end()) //si ce n'est pas le premier tour et donc itD_last est bon
-				{
-					//std::cout << "Dollar rate date = " << itD_last->first << std::endl;
-					check_and_calcul(itB->first, itB->second, itD_last->second); //itD_last
-				}
-				else //sinon c est le premier tour et on doit prendre itD et non last
-				{
-					//std::cout << "Dollar rate date = " << itD_last->first << std::endl;
+				if (itD_last != dollar_rate.end())
+					check_and_calcul(itB->first, itB->second, itD_last->second);
+				else
 					check_and_calcul(itB->first, itB->second, itD->second);
-				}
 
-				break;//??
+				break;
 			}
 			itD_last = itD;
 			itD++;
