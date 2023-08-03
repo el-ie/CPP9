@@ -12,7 +12,6 @@
 #define NODEBUG 41
 #define DEBUG 40
 
-//std::map<std::string, double>	file_to_map(std::string file, int debug, std::string sep_str, std::ifstream inputFile)
 std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, std::string sep_str)
 {
 
@@ -23,17 +22,16 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 	std::string	value_str	= "";
 	double		value		= 0;
 	size_t		pos		= 0;
-	int		loop		= 0;//remove?
 
 	char *endptr;
 
 	(void)debug;
 
+	//pass title
+	getline(inputFile, line_readed); 
+
 	while (getline(inputFile, line_readed))
 	{
-		if (loop == 0)
-		{loop++; continue;}
-
 		//security check line
 
 		pos = line_readed.find(sep_str.c_str(), 0);       //if (pos == std::string::npos) ??
@@ -55,6 +53,8 @@ std::map<std::string, double>	file_to_map(std::ifstream & inputFile, int debug, 
 			abort();
 		}
 	}
+
+	inputFile.close();
 
 	return	data;
 	// resoudre le probleme de la perte de la deuxieme decimale dans la conversion
@@ -218,6 +218,12 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 
 }
 
+int	error_log(std::string str)
+{
+	std::cerr << str << std::endl;
+	return 1;
+}
+
 int	main(int argc, char **argv)
 {
 	if (argc != 2)
@@ -227,15 +233,17 @@ int	main(int argc, char **argv)
 	}
 	
 	std::ifstream	data_file("data.csv");
+
+	if (!data_file.is_open())
+		return (error_log("Error: could not open file."));
+
 	std::ifstream	bitcoin_wallet_file(argv[1]);
 
-	if (!data_file.is_open() || !bitcoin_wallet_file.is_open())
+	if (!bitcoin_wallet_file.is_open())
 	{
-		std::cerr << "Error: could not open file." << std::endl;
-		return 1;
+		data_file.close();
+		return (error_log("Error: could not open file."));
 	}
-
-	//protect read
 
 	std::map<std::string, double>	dollar_rate, bitcoins;
 
