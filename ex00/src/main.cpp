@@ -124,8 +124,6 @@ bool	file_to_map(std::ifstream & inputFile, std::map<std::string, double> & data
 	inputFile.close();
 
 	return	true;
-	// resoudre le probleme de la perte de la deuxieme decimale dans la conversion
-	// a partir de 2020-07-25,9551.28 (wtf)
 }
 
 void	display_map(std::map<std::string, double> data, int modulo) 
@@ -140,43 +138,38 @@ void	display_map(std::map<std::string, double> data, int modulo)
 	}
 }
 
-
-#define DEBUGG 0
-
 void	similar_dates_remove_points(std::string & date)
 {
 	while (date.at(date.length() - 1) == '.')
 		date.erase(date.length() - 1);
 }
 
+#define DEBUG 0
+
 //date doit etre une copie pour enlever les .
 bool	correct_date(std::string date)
 {
-	//TODO gerer le cas de la double date avec l'ajout des points ....	
-
 	if (date.empty())
 		return false;
 
 	if (date.find('.') != std::string::npos)
 		similar_dates_remove_points(date);
 
-	//std::cout << "DATE  " << date << std::endl;
-
 	if (date.size() != 10)
 	{
-		if (DEBUGG) std::cout << "if (date.size() != 10)" << std::endl;
+		if (DEBUG) std::cout << "if (date.size() != 10)" << std::endl;
 		return false;
 	}
 
 	if (!isOnlyDigits(date.substr(0,4) + date.substr(5,2) + date.substr(8,2)))
 	{
-		if (DEBUGG) std::cout << "!Isdigitonly" << std::endl;
+		if (DEBUG) std::cout << "!Isdigitonly" << std::endl;
 		return false;
 	}
 
 	if (date[4] != '-' || date[7] != '-')
 	{	
-		if (DEBUGG) std::cout << "Guillement" << std::endl;
+		if (DEBUG) std::cout << "Guillement" << std::endl;
 		return false;
 	}
 
@@ -188,27 +181,30 @@ bool	correct_date(std::string date)
 	int	month = std::atoi(month_str.c_str());
 	int	day = std::atoi(day_str.c_str());
 
+	if (year == 2009 && month == 1 && day == 1)
+		return false;
+
 	if (year < 2009 || year > 2023)
 	{
-		if (DEBUGG) std::cout << "year < 2009 || year > 2023 " << std::endl;
+		if (DEBUG) std::cout << "year < 2009 || year > 2023 " << std::endl;
 		return false;
 	}
 
-	if (year == 2023 && month > 6)
+	if (year == 2023 && month > 7)
 	{
-		if (DEBUGG) std::cout << "year == 2023 || month > 6 " << std::endl;
+		if (DEBUG) std::cout << "year == 2023 || month > 6 " << std::endl;
 		return false;
 	}
 
 	if (month < 1 || month > 12)
 	{
-		if (DEBUGG) std::cout << "month < 1 || month > 12 " << std::endl;
+		if (DEBUG) std::cout << "month < 1 || month > 12 " << std::endl;
 		return false;
 	}
 
 	if (day < 1 || day > 31)
 	{
-		if (DEBUGG) std::cout << "day < 1 || day > 31 " << std::endl;
+		if (DEBUG) std::cout << "day < 1 || day > 31 " << std::endl;
 		return false;
 	}
 
@@ -217,7 +213,7 @@ bool	correct_date(std::string date)
 	{
 		if (day > 30)
 		{
-			if (DEBUGG) std::cout <<"month == 4 || month == 6 || month == 9 || month == 11 ET day > 30\n";
+			if (DEBUG) std::cout <<"month == 4 || month == 6 || month == 9 || month == 11 ET day > 30\n";
 			return false;
 		}
 	}
@@ -225,7 +221,7 @@ bool	correct_date(std::string date)
 
 	if (month == 2)
 	{
-		if (DEBUGG) std::cout << "month ==2\n" << std::endl;
+		if (DEBUG) std::cout << "month ==2\n" << std::endl;
 		if (day > 29)
 			return false;
 
@@ -247,7 +243,7 @@ bool	correct_date(std::string date)
 void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 {
 
-	if (DEBUGG)
+	if (DEBUG)
 		std::cout << std::endl << "			=>  [" << Bdate << "]  <=" << std::endl;
 
 	if (!correct_date(Bdate) || Bvalue < 0 || Bvalue > 1000)
@@ -256,7 +252,7 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 		{
 			std::cerr << "Error: bad input => " << Bdate << std::endl;
 
-			if (DEBUGG) { std::cerr << Bdate << "] INCORRECT DATE" << std::endl;
+			if (DEBUG) { std::cerr << Bdate << "] INCORRECT DATE" << std::endl;
 				std::cerr << "\n----------------------------" << std::endl; }
 		}
 		if (Bvalue < 0)
@@ -266,9 +262,7 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 		return;
 	}
 
-	//(void)Drate;
-
-	double result = Bvalue * Drate; //check over the flow ?
+	double result = Bvalue * Drate;
 
 	std::cout << Bdate << " => " << Bvalue << " = " << result << std::endl;
 	//std::cout << "Drate = " << Drate << std::endl;
@@ -349,9 +343,15 @@ int	main(int argc, char **argv)
 			if (itB->first < itD->first)
 			{
 				if (itD_last != dollar_rate.end()) //si ce n'est pas le premier tour et donc itD_last est bon
+				{
+					std::cout << "Dollar rate date = " << itD_last->first << std::endl;
 					check_and_calcul(itB->first, itB->second, itD_last->second); //itD_last
+				}
 				else //sinon c est le premier tour et on doit prendre itD et non last
+				{
+					std::cout << "Dollar rate date = " << itD_last->first << std::endl;
 					check_and_calcul(itB->first, itB->second, itD->second);
+				}
 
 				break;//??
 			}
