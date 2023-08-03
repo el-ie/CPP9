@@ -254,6 +254,13 @@ void	check_and_calcul(std::string Bdate, double Bvalue, double Drate)
 	}
 
 	double result = Bvalue * Drate;
+	int pos;
+
+	while (Bdate.find(".") != std::string::npos)
+	{
+		pos = Bdate.find(".");
+		Bdate.erase(pos, 1);
+	}
 
 	std::cout << Bdate << " => " << Bvalue << " = " << result << std::endl;
 }
@@ -267,7 +274,7 @@ int	error_log(std::string str)
 int	main(int argc, char **argv)
 {
 	if (argc != 2)
-		return (error_log("Error: could not open file.");
+		return (error_log("Error: could not open file."));
 		
 	std::ifstream	data_file("data.csv");
 
@@ -346,8 +353,6 @@ int	main(int argc, char **argv)
 		if (itD == dollar_rate.end())
 			check_and_calcul(itB->first, itB->second, itD_last->second);
 	}
-
-	std::cout << std::endl;
 
 	return 0;
 }
